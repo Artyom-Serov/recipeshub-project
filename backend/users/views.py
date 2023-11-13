@@ -8,13 +8,16 @@ from rest_framework.views import APIView
 
 from api.pagination import CustomPagination
 from .models import Follow, User
+from api.serializers import CustomUserSerializer, FollowSerializer
 
 
 class CustomUserViewSet(UserViewSet):
     """
     ViewSet для работы с пользователями.
     """
+
     queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
@@ -22,6 +25,8 @@ class FollowViewSet(APIView):
     """
     APIView для добавления и удаления подписки на автора
     """
+
+    serializer_class = FollowSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
@@ -70,6 +75,8 @@ class FollowListView(ListAPIView):
     """
     APIView для просмотра подписок.
     """
+
+    serializer_class = FollowSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
