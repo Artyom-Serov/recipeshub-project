@@ -1,4 +1,5 @@
 from djoser.views import UserViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
@@ -7,13 +8,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from .pagination import CustomPagination
-from .serializers import (CustomUserSerializer, FollowSerializer,
-                          IngredientSerializer,
-                          TagSerializer)
 from recipes.models import (Ingredient, Recipe,
                             Tag)
 from users.models import Follow, User
+from .filters import IngredientSearchFilter, RecipeFilter
+from .pagination import CustomPagination
+from .permissions import IsAuthorOrReadOnly
+from .serializers import (CustomUserSerializer, FollowSerializer,
+                          IngredientSerializer,
+                          TagSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -106,6 +109,7 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
     """
     queryset = Ingredient.objects.all()
     permission_classes = (AllowAny, )
+    filter_backends = [IngredientSearchFilter]
     serializer_class = IngredientSerializer
     search_fields = ('^name',)
 
@@ -116,4 +120,7 @@ class RecipeViewSet(ModelViewSet):
     Для анонимов разрешен только просмотр рецептов.
     """
     queryset = Recipe.objects.all()
+    permission_classes = [IsAuthorOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RecipeFilter
     pagination_class = CustomPagination
