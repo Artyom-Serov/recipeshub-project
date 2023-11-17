@@ -226,7 +226,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         cooking_time = data['cooking_time']
         if int(cooking_time) <= 0:
             raise serializers.ValidationError({
-                'cooking_time': 'Время приготовления должно быть больше 0!'
+                'cooking_time':
+                'Время приготовления должно быть не менее минуты!'
             })
         return data
 

@@ -1,6 +1,8 @@
 from djoser.views import UserViewSet
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
@@ -9,14 +11,19 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from recipes.models import (Ingredient, Recipe,
-                            Tag)
+                            Tag, RecipesFavorite, ShoppingCart,
+                            IngredientInRecipe)
 from users.models import Follow, User
 from .filters import IngredientSearchFilter, RecipeFilter
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (CustomUserSerializer, FollowSerializer,
                           IngredientSerializer,
-                          TagSerializer)
+                          TagSerializer,
+                          RecipeSerializer,
+                          RecipeListSerializer,
+                          FavoriteSerializer,
+                          ShoppingCartSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -124,3 +131,65 @@ class RecipeViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
     pagination_class = CustomPagination
+    serializer_class = RecipeSerializer
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return RecipeListSerializer
+        return RecipeSerializer
+
+    @staticmethod
+    def post_method_for_actions(request, pk, serializers):
+        data = {'user': request.user.id, 'recipe': pk}
+        serializer = serializers(data=data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @staticmethod
+    def delete_method_for_actions(request, pk, model):
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=pk)
+        model_obj = get_object_or_404(model, user=user, recipe=recipe)
+        model_obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["POST"],
+            permission_classes=[IsAuthenticated])
+    def favorite(self, request, pk):
+        return self.post_method_for_actions(
+            request=request, pk=pk, serializers=FavoriteSerializer)
+
+    @favorite.mapping.delete
+    def delete_favorite(self, request, pk):
+        return self.delete_method_for_actions(
+            request=request, pk=pk, model=RecipesFavorite)
+
+    @action(detail=True, methods=["POST"],
+            permission_classes=[IsAuthenticated])
+    def shopping_cart(self, request, pk):
+        return self.post_method_for_actions(
+            request=request, pk=pk, serializers=ShoppingCartSerializer)
+
+    @action(detail=False, methods=['get'],
+            permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        user = self.request.user
+        shopping_cart_items = IngredientInRecipe.objects.filter(user=user)
+        file = "Shopping Cart:\n\n"
+        for item in shopping_cart_items:
+            recipe = item.recipe
+            ingredients = recipe.ingredients.all()
+            file += f"Recipe: {recipe.title}\n"
+            for ingredient in ingredients:
+                file += f"{ingredient.name}: {item.amount} {ingredient.unit}\n"
+            file += "\n"
+        response = HttpResponse(file, content_type='text/plain')
+        response['Content-Disposition'] = ('attachment; '
+                                           'filename="shopping_cart.txt"')
+        return response
+
+    @shopping_cart.mapping.delete
+    def delete_shopping_cart(self, request, pk):
+        return self.delete_method_for_actions(
+            request=request, pk=pk, model=ShoppingCart)
