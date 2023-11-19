@@ -24,6 +24,9 @@ class Ingredient(models.Model):
                                     name='unique ingredient')
         ]
 
+    def __str__(self):
+        return f'{self.name}, {self.measurement_unit}'
+
 
 class Tag(models.Model):
     """Тэги."""
@@ -45,6 +48,9 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -84,9 +90,21 @@ class Recipe(models.Model):
             MinValueValidator(
                 1, message='Время должно быть больше 1 минуты'),),
     )
+    pub_date = models.DateTimeField(
+        'Дата публикации',
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ['-pub_date']
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+
+    def __str__(self):
+        return self.name
 
 
-class IngredientInRecipe:
+class IngredientInRecipe(models.Model):
     """Ингредиенты для рецепта."""
 
     recipe = models.ForeignKey(
@@ -134,6 +152,14 @@ class RecipesFavorite(models.Model):
         related_name='favorites',
         verbose_name='Рецепт',
     )
+
+    class Meta:
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранные'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique favorite')
+        ]
 
 
 class ShoppingCart(models.Model):

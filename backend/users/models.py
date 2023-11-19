@@ -1,8 +1,8 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 
 
-class User(AbstractUser):
+class User(AbstractBaseUser):
     """Модель пользователя."""
 
     email = models.EmailField(
@@ -11,11 +11,13 @@ class User(AbstractUser):
         max_length=150,
     )
     username = models.CharField(
+        'Уникальный юзернейм',
         max_length=150,
         unique=True,
     )
     first_name = models.CharField('Имя', max_length=150)
     last_name = models.CharField('Фамилия', max_length=150)
+    is_active = models.BooleanField('Активирован', default=True)
 
     class Meta:
         verbose_name = 'Пользователь'
