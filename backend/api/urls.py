@@ -11,7 +11,6 @@ router.register('ingredients', IngredientsViewSet, basename='ingredients')
 router.register('tags', TagsViewSet, basename='tags')
 
 urlpatterns = [
-    path('', include(router.urls)),
     path(
         'users/subscriptions/',
         FollowListView.as_view(),
