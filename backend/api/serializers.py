@@ -1,6 +1,8 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+# from rest_framework import status
+# from rest_framework.response import Response
 
 from recipes.models import (Recipe,
                             RecipesFavorite,
@@ -38,6 +40,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+        # serializer = CustomUserSerializer(instance=user, context=self.context)
+        # return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class CustomUserSerializer(UserSerializer):
@@ -59,9 +63,15 @@ class CustomUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return Follow.objects.filter(user=user, author=obj.id).exists()
+        if user.is_authenticated:
+            return Follow.objects.filter(user=user, author=obj.id).exists()
+
+        return False
+
+    def to_representation(self, instance):
+        if self.context['request'].user.is_anonymous:
+            return {}
+        return super().to_representation(instance)
 
 
 class FollowSerializer(CustomUserSerializer):
