@@ -40,8 +40,6 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
-        # serializer = CustomUserSerializer(instance=user, context=self.context)
-        # return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class CustomUserSerializer(UserSerializer):
