@@ -63,6 +63,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField('Имя', max_length=150)
     last_name = models.CharField('Фамилия', max_length=150)
     is_active = models.BooleanField('Активирован', default=True)
+    is_staff = models.BooleanField('Администратор', default=False)
+    is_superuser = models.BooleanField('Суперпользователь', default=False)
 
     objects = CustomUserManager()
 
