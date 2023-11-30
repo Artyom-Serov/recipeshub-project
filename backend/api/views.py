@@ -34,6 +34,7 @@ class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = CustomPagination
 
 
 class FollowViewSet(APIView):
