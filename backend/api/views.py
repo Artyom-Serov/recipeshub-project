@@ -1,9 +1,11 @@
-from djoser.views import UserViewSet
 from django.http import HttpResponse
+from djoser.views import UserViewSet
+from django.core.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.generics import ListAPIView, get_object_or_404
+from rest_framework.generics import (ListAPIView, RetrieveAPIView,
+                                     get_object_or_404)
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
@@ -35,6 +37,52 @@ class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = CustomPagination
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        count = self.queryset.count()
+        data = {
+            'count': count,
+            'next': self.paginator.get_next_link(),
+            'previous': self.paginator.get_previous_link(),
+            'results': serializer.data
+        }
+        return Response(data)
+
+    @action(detail=False, methods=['GET'])
+    def me(self, request, *args, **kwargs):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
+
+
+class CurrentUserView(RetrieveAPIView):
+    """
+    Представление получения информации о текущем пользователе.
+    """
+    permission_classes = [IsAuthenticated]
+    serializer_class = CustomUserSerializer
+
+    def get_object(self):
+        """Получение объекта текущего пользователя."""
+        return self.request.user
+
+    def retrieve(self, request, *args, **kwargs):
+        """Обработка GET-запроса и возврат информации о пользователе."""
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def handle_exception(self, exc):
+        """
+        Обработка исключения для возврата описания ошибки при статус-коде 401.
+        """
+        if isinstance(exc, PermissionDenied):
+            return Response(
+                {"detail": "Учетные данные не были предоставлены."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        return super().handle_exception(exc)
 
 
 class FollowViewSet(APIView):
