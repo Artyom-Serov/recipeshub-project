@@ -39,6 +39,7 @@ class CustomUserViewSet(UserViewSet):
     pagination_class = CustomPagination
 
     def list(self, request, *args, **kwargs):
+        """Метод для обработки запроса списка пользователей."""
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         serializer = self.get_serializer(page, many=True)
@@ -53,6 +54,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(detail=False, methods=['GET'])
     def me(self, request, *args, **kwargs):
+        """Получения данных о текущем пользователе."""
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
@@ -74,9 +76,8 @@ class CurrentUserView(RetrieveAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def handle_exception(self, exc):
-        """
-        Обработка исключения для возврата описания ошибки при статус-коде 401.
-        """
+        """Обработка исключения для возврата описания
+        ошибки при статус-коде 401."""
         if isinstance(exc, PermissionDenied):
             return Response(
                 {"detail": "Учетные данные не были предоставлены."},
@@ -95,6 +96,7 @@ class FollowViewSet(APIView):
     pagination_class = CustomPagination
 
     def post(self, request, *args, **kwargs):
+        """Метод для добавления подписки на автора."""
         user_id = self.kwargs.get('user_id')
         if user_id == request.user.id:
             return Response(
@@ -120,6 +122,7 @@ class FollowViewSet(APIView):
         )
 
     def delete(self, request, *args, **kwargs):
+        """Метод для удаления подписки на автора."""
         user_id = self.kwargs.get('user_id')
         get_object_or_404(User, id=user_id)
         subscription = Follow.objects.filter(
@@ -145,6 +148,7 @@ class FollowListView(ListAPIView):
     pagination_class = CustomPagination
 
     def get_queryset(self):
+        """Метод для получения списка подписок текущего пользователя."""
         return User.objects.filter(following__user=self.request.user)
 
 
@@ -183,12 +187,14 @@ class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeSerializer
 
     def get_serializer_class(self):
+        """Получение класса сериализатора в зависимости от действия."""
         if self.action in ('list', 'retrieve'):
             return RecipeListSerializer
         return RecipeSerializer
 
     @staticmethod
     def post_method_for_actions(request, pk, serializers):
+        """Общий метод для обработки POST-запросов."""
         data = {'user': request.user.id, 'recipe': pk}
         serializer = serializers(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -197,6 +203,7 @@ class RecipeViewSet(ModelViewSet):
 
     @staticmethod
     def delete_method_for_actions(request, pk, model):
+        """Общий метод для обработки DELETE-запросов."""
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         model_obj = get_object_or_404(model, user=user, recipe=recipe)
@@ -206,23 +213,27 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=True, methods=['POST'],
             permission_classes=[IsAuthenticated])
     def favorite(self, request, pk):
+        """Добавление рецепта в избранное."""
         return self.post_method_for_actions(
             request=request, pk=pk, serializers=FavoriteSerializer)
 
     @favorite.mapping.delete
     def delete_favorite(self, request, pk):
+        """Удаление рецепта из избранного."""
         return self.delete_method_for_actions(
             request=request, pk=pk, model=RecipesFavorite)
 
     @action(detail=True, methods=['POST'],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk):
+        """Добавление рецепта в корзину покупок."""
         return self.post_method_for_actions(
             request=request, pk=pk, serializers=ShoppingCartSerializer)
 
     @action(detail=False, methods=['GET'],
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
+        """Загрузка списка покупок в виде текстового файла."""
         user = self.request.user
         shopping_cart_items = IngredientInRecipe.objects.filter(user=user)
         file = "Shopping Cart:\n\n"
@@ -240,5 +251,6 @@ class RecipeViewSet(ModelViewSet):
 
     @shopping_cart.mapping.delete
     def delete_shopping_cart(self, request, pk):
+        """Удаление рецепта из корзины покупок."""
         return self.delete_method_for_actions(
             request=request, pk=pk, model=ShoppingCart)
