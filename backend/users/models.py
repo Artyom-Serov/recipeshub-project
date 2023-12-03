@@ -1,5 +1,8 @@
+"""Приложение для управления моделями пользователей."""
+
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
+from django.core.validators import RegexValidator
 from django.db import models
 
 
@@ -59,6 +62,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         'Уникальный юзернейм',
         max_length=150,
         unique=True,
+        validators=[RegexValidator(
+            regex=r'^[\w.@+-]+$',
+            message='Введите правильное имя пользователя.',
+            code='invalid_username')],
     )
     first_name = models.CharField('Имя', max_length=150)
     last_name = models.CharField('Фамилия', max_length=150)

@@ -1,4 +1,4 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from users.models import User
 
@@ -43,6 +43,10 @@ class Tag(models.Model):
         'Уникальный слаг',
         unique=True,
         max_length=200,
+        validators=[RegexValidator(
+            regex=r'^[-a-zA-Z0-9_]+$',
+            message='Введите правильный slug.',
+            code='invalid_slug')],
     )
 
     class Meta:
