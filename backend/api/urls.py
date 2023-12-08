@@ -11,20 +11,16 @@ router.register('recipes', RecipeViewSet, basename='recipes')
 router.register('ingredients', IngredientsViewSet, basename='ingredients')
 router.register('tags', TagsViewSet, basename='tags')
 
+user_urls = [
+    path('me/', CurrentUserView.as_view(), name='current-user'),
+    path('subscriptions/', FollowListView.as_view(), name='subscriptions'),
+    path('<int:user_id>/subscribe/',
+         FollowViewSet.as_view(),
+         name='subscribe'),
+]
+
 urlpatterns = [
-    path('users/me/',
-         CurrentUserView.as_view(),
-         name='current-user'),
-    path(
-        'users/subscriptions/',
-        FollowListView.as_view(),
-        name='subscriptions'
-    ),
-    path(
-        'users/<int:user_id>/subscribe/',
-        FollowViewSet.as_view(),
-        name='subscribe'
-    ),
+    path('users/', include(user_urls)),
     path('', include(router.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
