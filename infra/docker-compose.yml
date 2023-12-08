@@ -4,6 +4,8 @@ volumes:
   pg_data:
   static:
   media:
+  redoc:
+  result_build:
 
 services:
   db:
@@ -11,10 +13,17 @@ services:
     env_file: ../.env
     volumes:
       - pg_data:/var/lib/postgresql/data
+  backend:
+    image: artyomserov/foodgram_backend:latest
+    env_file: .env
+    volumes:
+      - static:/app/static/
+      - media:/app/media/
+      - redoc:/app/api/docs/
+    depends_on:
+      - db
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: artyomserov/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
@@ -24,4 +33,10 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
-      - ../backend/api/docs/:/usr/share/nginx/html/api/docs/
+      - static:/var/html/static/
+      - media:/var/html/media/
+      - redoc:/usr/share/nginx/html/api/docs/
+    depends_on:
+      - db
+      - backend
+      - frontend
