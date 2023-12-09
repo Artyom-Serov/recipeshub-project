@@ -11,7 +11,7 @@ import os
 from django.core.management import BaseCommand
 from django.db import IntegrityError
 
-from recipes.models import Ingredient
+from recipes.models import Ingredient, Tag
 
 FILES_CLASSES = {
     'ingredients': Ingredient,
@@ -57,9 +57,11 @@ def change_foreign_values(data):
 
 
 def load_data(file_name, class_name, file_type, project_root):
-    """Осуществляет загрузку данных."""
-    table_not_loaded = f'Таблица {class_name.__qualname__} не загружена.'
-    table_loaded = f'Таблица {class_name.__qualname__} загружена.'
+    """Загружает данные ингредиентов из файлов ingredients.json или
+    ingredients.csv."""
+    table_not_loaded = (f'Информация в таблицу'
+                        f'{class_name.__qualname__} не загружена.')
+    table_loaded = f'Информация в таблицу {class_name.__qualname__} загружена.'
     data = open_data_file(file_name, file_type, project_root)
 
     if data is None:
@@ -94,12 +96,38 @@ def load_data(file_name, class_name, file_type, project_root):
         print(table_loaded)
 
 
+def load_tags(project_root):
+    """Загружает данные тегов из файла tags.json."""
+    file_name = 'tags'
+    file_type = 'json'
+    class_name = Tag
+
+    data = open_data_file(file_name, file_type, project_root)
+
+    if data is None:
+        print(f'Пропуск загрузки данных для {file_name}.{file_type}')
+        return
+
+    for item in data:
+        try:
+            tag = class_name.objects.create(**item)
+        except (ValueError, IntegrityError) as error:
+            print(f'Ошибка в загружаемых данных. {error}.')
+            break
+
+        print(f'Тег {tag.name} загружен.')
+    print(f'Информация в таблицу {class_name.__qualname__} загружена.')
+
+
 class Command(BaseCommand):
     """Класс загрузки информации в базу данных."""
 
     def handle(self, *args, **options):
         project_root = os.getcwd()
         for key, value in FILES_CLASSES.items():
-            print(f'Загрузка таблицы {value.__qualname__}')
+            print(f'Загрузка информации в таблицу {value.__qualname__}')
             load_data(key, value, 'csv', project_root)
             load_data(key, value, 'json', project_root)
+
+        print('Загрузка тегов')
+        load_tags(project_root)
