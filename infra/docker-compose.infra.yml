@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  backend:
+    image: artyomserov/foodgram_backend:latest
+    ports:
+      - "7000:7000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - foodgram_network
+
+  frontend:
+    image: artyomserov/foodgram_frontend:latest
+    ports:
+      - "80:80"
+    networks:
+      - foodgram_network
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - foodgram_network
+
+networks:
+  foodgram_network:
+
+volumes:
+  postgres_data:

@@ -102,7 +102,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+backend/.env
 .venv
 env/
 venv/
@@ -131,6 +131,9 @@ dmypy.json
 # .idea
 .idea
 
-media/
+/media
 
 *.jpeg
+
+# The project verification folder in postman
+/postman-collection

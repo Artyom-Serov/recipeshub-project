@@ -26,7 +26,7 @@ FIELDS = {
 def open_data_file(file_name, file_type, project_root):
     """Менеджер контекста для открытия файлов."""
     file_path = os.path.join(
-        project_root, '..', 'data', f'{file_name}.{file_type}')
+        project_root, 'data', f'{file_name}.{file_type}')
     try:
         with open(file_path, encoding='utf-8') as file:
             if file_type == 'csv':
