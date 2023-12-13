@@ -137,4 +137,4 @@ dmypy.json
 *.jpeg
 
 # The project verification folder in postman
-/postman-collection/
+!/postman-collection/
