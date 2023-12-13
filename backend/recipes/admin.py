@@ -1,4 +1,6 @@
+from django import forms
 from django.contrib import admin
+from django.forms import BaseInlineFormSet
 
 from .models import (Ingredient, IngredientInRecipe, Recipe,
                      RecipesFavorite, ShoppingCart, Tag)
@@ -18,13 +20,38 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class IngredientInRecipeInlineFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+
+        ingredients = set()
+        for form in self.forms:
+            if form.cleaned_data and form.cleaned_data['ingredient'] in ingredients:
+                raise forms.ValidationError('Ингредиенты должны быть уникальными.')
+            ingredients.add(form.cleaned_data['ingredient'])
+
+
+class IngredientInRecipeInline(admin.TabularInline):
+    model = IngredientInRecipe
+    extra = 1
+    formset = IngredientInRecipeInlineFormSet
+
+
+class RecipeAdminForm(forms.ModelForm):
+    class Meta:
+        model = Recipe
+        exclude = []
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'author', 'image',
-                    'cooking_time', 'pub_date')
-    list_filter = ('author', 'name', 'tags')
-    search_fields = ('name',)
-    empty_value_display = '-пусто-'
+    list_display = ('name', 'author', 'pub_date')
+    list_filter = ('author', 'tags')
+    search_fields = ('name', 'author__username')
+    date_hierarchy = 'pub_date'
+    inlines = [IngredientInRecipeInline]
+
+    form = RecipeAdminForm
 
 
 @admin.register(IngredientInRecipe)

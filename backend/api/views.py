@@ -235,7 +235,7 @@ class RecipeViewSet(ModelViewSet):
     def download_shopping_cart(self, request):
         """Загрузка списка покупок в виде текстового файла."""
         user = self.request.user
-        shopping_cart_items = IngredientInRecipe.objects.filter(user=user)
+        shopping_cart_items = ShoppingCart.objects.filter(user=user)
         file = "Shopping Cart:\n\n"
         for item in shopping_cart_items:
             recipe = item.recipe
