@@ -78,25 +78,29 @@ class Recipe(models.Model):
         related_name='recipes',
     )
     name = models.CharField(
-        'Название рецепта',
-        max_length=200
+        verbose_name='Название рецепта',
+        max_length=200,
+        help_text='Укажите название блюда'
     )
     image = models.ImageField(
-        'Изображение',
-        upload_to='recipes/',
+        verbose_name='Изображение',
+        upload_to='media/',
+        blank=True,
+        help_text='Выберите изображение для рецепта'
     )
     text = models.TextField(
-        'Описание рецепта'
+        verbose_name='Описание рецепта'
     )
     cooking_time = models.PositiveSmallIntegerField(
-        'Время приготовления (в минутах)',
+        verbose_name='Время приготовления (в минутах)',
         validators=(
             MinValueValidator(
-                1, message='Время должно быть больше 1 минуты'),),
+                limit_value=1, message='Время должно быть больше 1 минуты'),),
     )
     pub_date = models.DateTimeField(
-        'Дата публикации',
-        auto_now_add=True
+        verbose_name='Дата публикации',
+        auto_now_add=True,
+        db_index=True,
     )
 
     class Meta:
@@ -124,10 +128,10 @@ class IngredientInRecipe(models.Model):
         verbose_name='Ингредиент'
     )
     amount = models.PositiveSmallIntegerField(
-        'Количество ингредиента',
+        verbose_name='Количество ингредиента',
         validators=(
             MinValueValidator(
-                1, message='Количество не может быть меньше 1'),),
+                limit_value=1, message='Количество не может быть меньше 1'),),
     )
 
     class Meta:
