@@ -103,6 +103,8 @@ celerybeat.pid
 
 # Environments
 backend/.env
+env
+.env
 *.env
 *env
 .venv
@@ -141,4 +143,4 @@ dmypy.json
 
 # The project verification folder in postman
 /postman-collection
-!/env
+backend/static
