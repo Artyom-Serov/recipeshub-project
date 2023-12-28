@@ -7,34 +7,54 @@ volumes:
 
 services:
   db:
-    image: postgres:13.10
-    env_file: .env
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    container_name: foodgram-db
     volumes:
       - pg_data:/var/lib/postgresql/data
+    restart: always
   backend:
-    build: ./backend/
-    env_file: .env
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    container_name: foodgram-backend
+    environment:
+      DEBUG: ${DEBUG}
+      SECRET_KEY: ${SECRET_KEY}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
     volumes:
-      - static:/static/
-      - media:/media/
+      - static:/app/static
+      - media:/app/media
     depends_on:
       - db
+
   frontend:
-    build: ./frontend/
-    command: cp -r /app/build/. /static/
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: foodgram-frontend
     volumes:
-      - static:/static/
+      - static:/app/static
+      - ../frontend/:/app/result_build/
     depends_on:
       - backend
-  infra:
-    build: ./infra/
-    env_file: .env
-    volumes:
-      - static:/static/
-      - media:/media/
-      - ./backend/api/docs/:/usr/share/nginx/html/api/docs/
     ports:
-      - 7000:80
+      - "3000:3000"
+  infra:
+    build:
+      context: .
+      dockerfile: ./infra/Dockerfile
+    container_name: foodgram-gateway
+    volumes:
+      - static:/app/static
+      - media:/app/media
+      - ./backend/api/docs/:/usr/share/nginx/html/api/docs/
+      - ../frontend/:/app/result_build/
+    ports:
+      - "7000:80"
+      - "443:443"
     depends_on:
       - backend
-      - frontend

@@ -28,128 +28,128 @@ from .serializers import (CustomUserSerializer, FollowSerializer,
                           ShoppingCartSerializer)
 
 
-class CustomUserViewSet(UserViewSet):
-    """
-    ViewSet для работы с пользователями.
-    """
-
-    queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    pagination_class = CustomPagination
-
-    def list(self, request, *args, **kwargs):
-        """Метод для обработки запроса списка пользователей."""
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page, many=True)
-        count = self.queryset.count()
-        data = {
-            'count': count,
-            'next': self.paginator.get_next_link(),
-            'previous': self.paginator.get_previous_link(),
-            'results': serializer.data
-        }
-        return Response(data)
-
-    @action(detail=False, methods=['GET'])
-    def me(self, request, *args, **kwargs):
-        """Получения данных о текущем пользователе."""
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
-
-
-class CurrentUserView(RetrieveAPIView):
-    """
-    Представление получения информации о текущем пользователе.
-    """
-    permission_classes = [IsAuthenticated]
-    serializer_class = CustomUserSerializer
-
-    def get_object(self):
-        """Получение объекта текущего пользователя."""
-        return self.request.user
-
-    def retrieve(self, request, *args, **kwargs):
-        """Обработка GET-запроса и возврат информации о пользователе."""
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def handle_exception(self, exc):
-        """Обработка исключения для возврата описания
-        ошибки при статус-коде 401."""
-        if isinstance(exc, PermissionDenied):
-            return Response(
-                {"detail": "Учетные данные не были предоставлены."},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        return super().handle_exception(exc)
-
-
-class FollowViewSet(APIView):
-    """
-    APIView для добавления и удаления подписки на автора
-    """
-
-    serializer_class = FollowSerializer
-    permission_classes = [IsAuthenticated]
-    pagination_class = CustomPagination
-
-    def post(self, request, *args, **kwargs):
-        """Метод для добавления подписки на автора."""
-        user_id = self.kwargs.get('user_id')
-        if user_id == request.user.id:
-            return Response(
-                {'error': 'Нельзя подписаться на себя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if Follow.objects.filter(
-                user=request.user,
-                author_id=user_id
-        ).exists():
-            return Response(
-                {'error': 'Вы уже подписаны на пользователя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        author = get_object_or_404(User, id=user_id)
-        Follow.objects.create(
-            user=request.user,
-            author_id=user_id
-        )
-        return Response(
-            self.serializer_class(author, context={'request': request}).data,
-            status=status.HTTP_201_CREATED
-        )
-
-    def delete(self, request, *args, **kwargs):
-        """Метод для удаления подписки на автора."""
-        user_id = self.kwargs.get('user_id')
-        get_object_or_404(User, id=user_id)
-        subscription = Follow.objects.filter(
-            user=request.user,
-            author_id=user_id
-        )
-        if subscription:
-            subscription.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(
-            {'error': 'Вы не подписаны на пользователя'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+# class CustomUserViewSet(UserViewSet):
+#     """
+#     ViewSet для работы с пользователями.
+#     """
+#
+#     queryset = User.objects.all()
+#     serializer_class = CustomUserSerializer
+#     permission_classes = [IsAuthenticatedOrReadOnly]
+#     pagination_class = CustomPagination
+#
+#     def list(self, request, *args, **kwargs):
+#         """Метод для обработки запроса списка пользователей."""
+#         queryset = self.filter_queryset(self.get_queryset())
+#         page = self.paginate_queryset(queryset)
+#         serializer = self.get_serializer(page, many=True)
+#         count = self.queryset.count()
+#         data = {
+#             'count': count,
+#             'next': self.paginator.get_next_link(),
+#             'previous': self.paginator.get_previous_link(),
+#             'results': serializer.data
+#         }
+#         return Response(data)
+#
+#     # @action(detail=False, methods=['GET'])
+#     def get(self, request, *args, **kwargs):
+#         """Получения данных о текущем пользователе."""
+#         serializer = self.get_serializer(request.user)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#
+#
+# class CurrentUserView(RetrieveAPIView):
+#     """
+#     Представление получения информации о текущем пользователе.
+#     """
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = CustomUserSerializer
+#
+#     def get_object(self):
+#         """Получение объекта текущего пользователя."""
+#         return self.request.user
+#
+#     def retrieve(self, request, *args, **kwargs):
+#         """Обработка GET-запроса и возврат информации о пользователе."""
+#         serializer = self.get_serializer(request.user)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#
+#     def handle_exception(self, exc):
+#         """Обработка исключения для возврата описания
+#         ошибки при статус-коде 401."""
+#         if isinstance(exc, PermissionDenied):
+#             return Response(
+#                 {"detail": "Учетные данные не были предоставлены."},
+#                 status=status.HTTP_401_UNAUTHORIZED
+#             )
+#         return super().handle_exception(exc)
 
 
-class FollowListView(ListAPIView):
-    """
-    APIView для просмотра подписок.
-    """
+# class FollowViewSet(APIView):
+#     """
+#     APIView для добавления и удаления подписки на автора
+#     """
+#
+#     serializer_class = FollowSerializer
+#     permission_classes = [IsAuthenticated]
+#     pagination_class = CustomPagination
+#
+#     def post(self, request, *args, **kwargs):
+#         """Метод для добавления подписки на автора."""
+#         user_id = self.kwargs.get('user_id')
+#         if user_id == request.user.id:
+#             return Response(
+#                 {'error': 'Нельзя подписаться на себя'},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+#         if Follow.objects.filter(
+#                 user=request.user,
+#                 author_id=user_id
+#         ).exists():
+#             return Response(
+#                 {'error': 'Вы уже подписаны на пользователя'},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+#         author = get_object_or_404(User, id=user_id)
+#         Follow.objects.create(
+#             user=request.user,
+#             author_id=user_id
+#         )
+#         return Response(
+#             self.serializer_class(author, context={'request': request}).data,
+#             status=status.HTTP_201_CREATED
+#         )
+#
+#     def delete(self, request, *args, **kwargs):
+#         """Метод для удаления подписки на автора."""
+#         user_id = self.kwargs.get('user_id')
+#         get_object_or_404(User, id=user_id)
+#         subscription = Follow.objects.filter(
+#             user=request.user,
+#             author_id=user_id
+#         )
+#         if subscription:
+#             subscription.delete()
+#             return Response(status=status.HTTP_204_NO_CONTENT)
+#         return Response(
+#             {'error': 'Вы не подписаны на пользователя'},
+#             status=status.HTTP_400_BAD_REQUEST
+#         )
 
-    serializer_class = FollowSerializer
-    permission_classes = [IsAuthenticated]
-    pagination_class = CustomPagination
 
-    def get_queryset(self):
-        """Метод для получения списка подписок текущего пользователя."""
-        return User.objects.filter(following__user=self.request.user)
+# class FollowListView(ListAPIView):
+#     """
+#     APIView для просмотра подписок.
+#     """
+#
+#     serializer_class = FollowSerializer
+#     permission_classes = [IsAuthenticated]
+#     pagination_class = CustomPagination
+#
+#     def get_queryset(self):
+#         """Метод для получения списка подписок текущего пользователя."""
+#         return User.objects.filter(following__user=self.request.user)
 
 
 class TagsViewSet(ReadOnlyModelViewSet):

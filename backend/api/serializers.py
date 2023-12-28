@@ -1,4 +1,5 @@
-from djoser.serializers import UserCreateSerializer, UserSerializer
+from djoser.serializers import (UserCreateSerializer, UserSerializer,
+                                TokenCreateSerializer)
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -9,6 +10,21 @@ from recipes.models import (Recipe,
                             ShoppingCart,
                             Tag)
 from users.models import Follow, User
+
+
+# class CustomTokenCreateSerializer(TokenCreateSerializer):
+#     """
+#     Кастомный сериализатор для генерации JWT-токенов.
+#     """
+#
+#     def create(self, validated_data):
+#         user = self.user or self.context['request'].user
+#         refresh = RefreshToken.for_user(user)
+#         data = {
+#             'refresh': str(refresh),
+#             'access': str(refresh.access_token),
+#         }
+#         return data
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
