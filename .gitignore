@@ -144,3 +144,6 @@ dmypy.json
 # The project verification folder in postman
 /postman-collection
 backend/static
+*qodana.yaml
+
+*Makefile
