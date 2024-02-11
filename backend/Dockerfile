@@ -2,13 +2,10 @@ FROM python:3.9
 
 WORKDIR /app
 
-COPY ./backend/requirements.txt .
+COPY . .
 #COPY requirements.txt .
 
 RUN pip install -r requirements.txt --no-cache-dir
-
-COPY ./backend .
-#COPY . .
 
 #RUN python manage.py migrate
 RUN python manage.py collectstatic --noinput
