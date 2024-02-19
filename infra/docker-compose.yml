@@ -41,6 +41,7 @@ services:
       - "8000:80"
     volumes:
       - static:/staticfiles
+      - ../backend/api/docs/:/usr/share/nginx/html/api/docs/
 
 volumes:
   fg_data:
