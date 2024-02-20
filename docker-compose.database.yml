@@ -6,7 +6,7 @@ networks:
 
 services:
   db:
-    container_name: foodgram_db
+    container_name: local_db
     image: postgres
     restart: always
     environment:

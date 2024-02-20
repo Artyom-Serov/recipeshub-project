@@ -4,13 +4,14 @@
  Foodgram - продуктовый помощник с базой кулинарных рецептов. Позволяет публиковать рецепты, сохранять избранные, а также формировать список покупок для выбранных рецептов. Можно подписываться на любимых авторов.
 
 ## Технологии:
-* Python 3.10
-* Django REST Framework 3.14.0
-* Django 4.2.7
-* gunicorn 21.2.0
-* Docker
+* [Python 3.10](https://docs.python.org/3.10/)
+* [Django 4.2.7](https://www.djangoproject.com/)
+* [Django REST Framework 3.14.0](https://www.django-rest-framework.org/)
+* [gunicorn 21.2.0](https://docs.gunicorn.org/en/stable/)
+* [Nginx](https://nginx.org/)
+* [Docker](https://www.docker.com/)
 
-## Запуск проекта
+## Запуск проекта локально
 Клонировать репозиторий и перейти в него:
 
 ```
@@ -32,7 +33,7 @@ python3 -m venv venv
     source venv/bin/activate
     ```
 
-* *Если у вас windows*
+* *Если у вас Windows*
 
     ```
     source venv/scripts/activate
@@ -47,18 +48,25 @@ cd backend
 ```
 pip install -r requirements.txt
 ```
+Заполните файл ```.env.example``` и переименуйте его в ```.env```
+
+Запустите контейнер с базой данных PostgreSQL:
+```
+make run
+```
 Выполнить миграции:
 
 ```
-python3 manage.py migrate
+make migrate
 ```
 Выполнить импорт ингредиентов и тегов базу данных:
 
 ```
-python3 manage.py import_data
+make import
 ```
 - Запустите проект:
 ```
-python manage.py runserver
+make runserver
 ```
+
 ### * *в разработке - настройка контейнеризации Docker*
