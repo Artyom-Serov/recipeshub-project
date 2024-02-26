@@ -19,7 +19,7 @@ help:
 	@echo "  clean             Очистить неиспользуемые контейнеры и образы"
 
 run:
-	$(DOCKER_COMPOSE) up --build
+	$(DOCKER_COMPOSE) up --build -d
 
 migrate:
 	$(DOCKER_EXEC) python manage.py migrate
