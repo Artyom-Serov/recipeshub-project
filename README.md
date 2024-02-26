@@ -52,21 +52,21 @@ pip install -r requirements.txt
 
 Запустите контейнер с базой данных PostgreSQL:
 ```
-make run
+make -f Makefile.db run
 ```
 Выполнить миграции:
 
 ```
-make migrate
+make -f Makefile.db migrate
 ```
 Выполнить импорт ингредиентов и тегов базу данных:
 
 ```
-make import
+make -f Makefile.db import
 ```
 - Запустите проект:
 ```
-make runserver
+make -f Makefile.db runserver
 ```
 
 ### * *в разработке - настройка контейнеризации Docker*
