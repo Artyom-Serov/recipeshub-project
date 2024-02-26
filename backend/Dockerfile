@@ -12,7 +12,7 @@ RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . ./
 
-RUN python manage.py collectstatic --noinput
+#RUN python manage.py collectstatic --noinput
 #RUN cp -r /app/collected_static/. /backend_static/static/
 #RUN python manage.py migrate
 

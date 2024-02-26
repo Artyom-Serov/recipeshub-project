@@ -16,6 +16,7 @@ help:
 	@echo "  migrate           Применить миграции Django"
 	@echo "  createsuperuser   Создать суперпользователя Django"
 	@echo "  import            Запустить импорт ингредиентов и тэгов"
+	@echo "  static            Скопировать статические файлы бэкенда"
 	@echo "  down              Остановить контейнеры"
 	@echo "  clean             Очистить неиспользуемые контейнеры и образы"
 
@@ -30,6 +31,10 @@ createsuperuser:
 
 import:
 	$(DOCKER_EXEC) python manage.py import_data
+
+static:
+	$(DOCKER_EXEC) python manage.py collectstatic --noinput
+	$(DOCKER_EXEC) cp -r /app/collected_static/. /backend_static/static/
 
 down:
 	$(DOCKER_COMPOSE) down

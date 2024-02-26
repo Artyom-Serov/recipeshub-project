@@ -16,9 +16,7 @@ services:
       - fg_data:/var/lib/postgresql/data
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: artyomserov/foodgram_frontend:v2
     container_name: frontend
     volumes:
       - static:/frontend_static
@@ -26,9 +24,7 @@ services:
       - backend
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: artyomserov/foodgram_backend:v2
     container_name: backend
     env_file:
       - .env
@@ -37,11 +33,10 @@ services:
       - media:/app/media
     depends_on:
       - db
+      - nginx
 
   nginx:
-    build:
-      context: ./infra
-      dockerfile: Dockerfile
+    image: artyomserov/foodgram_nginx:v2
     container_name: nginx
     restart: always
     ports:
