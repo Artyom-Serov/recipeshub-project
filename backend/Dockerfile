@@ -14,6 +14,8 @@ COPY . ./
 
 #RUN python manage.py collectstatic --noinput
 #RUN cp -r /app/collected_static/. /backend_static/static/
-#RUN python manage.py migrate
+CMD python manage.py migrate \
+    && python manage.py collectstatic --noinput \
+    && cp -r /app/collected_static/. /backend_static/static/
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "foodgram.wsgi:application"]
