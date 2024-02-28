@@ -147,5 +147,5 @@ dmypy.json
 backend/static
 *qodana.yaml
 
-infra/docker-compose.yml
-infra/Makefile
+backend/docker-compose.database.yml
+backend/Makefile
