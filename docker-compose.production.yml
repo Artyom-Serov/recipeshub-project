@@ -40,8 +40,7 @@ services:
     container_name: nginx
     restart: always
     ports:
-      - "80:80"
+      - "8000:80"
     volumes:
       - static:/staticfiles
       - media:/media
-      - ./backend/api/docs/:/usr/share/nginx/html/api/docs/
