@@ -50,8 +50,8 @@ def change_foreign_values(data):
             if field_key0 == 'measurement_unit':
                 continue
             data_copy[field_key0] = field_value
-            if ('measurement_unit' in data and
-                    FIELDS['measurement_unit'][0] == field_key0):
+            if ('measurement_unit' in
+                    data and FIELDS['measurement_unit'][0] == field_key0):
                 data_copy['measurement_unit'] = data['measurement_unit']
     return data_copy
 
