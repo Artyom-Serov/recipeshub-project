@@ -15,6 +15,12 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api/', include('djoser.urls')),
     path('drf-auth/', include('rest_framework.urls')),
-    path('auth/token/login/', CustomTokenCreateView.as_view(), name='token_create'),
-    path('auth/token/logout/', CustomTokenDestroyView.as_view(), name='token_destroy'),
+    path(
+        'auth/token/login/',
+        CustomTokenCreateView.as_view(),
+        name='token_create'),
+    path(
+        'auth/token/logout/',
+        CustomTokenDestroyView.as_view(),
+        name='token_destroy'),
 ]
