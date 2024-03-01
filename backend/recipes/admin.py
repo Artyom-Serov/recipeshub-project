@@ -26,8 +26,11 @@ class IngredientInRecipeInlineFormSet(BaseInlineFormSet):
 
         ingredients = set()
         for form in self.forms:
-            if form.cleaned_data and form.cleaned_data['ingredient'] in ingredients:
-                raise forms.ValidationError('Ингредиенты должны быть уникальными.')
+            if (form.cleaned_data and
+                    form.cleaned_data['ingredient'] in ingredients):
+                raise forms.ValidationError(
+                    'Ингредиенты должны быть уникальными.'
+                )
             ingredients.add(form.cleaned_data['ingredient'])
 
 
