@@ -50,4 +50,3 @@ services:
     volumes:
       - static:/staticfiles
       - media:/media
-      - ./backend/api/docs/:/usr/share/nginx/html/api/docs/
