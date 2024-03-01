@@ -24,8 +24,8 @@ services:
       - backend
 
   backend:
-    image: artyomserov/foodgram_backend:v2
     container_name: backend
+    image: artyomserov/foodgram_backend:v2
     env_file:
       - .env
     volumes:
@@ -33,7 +33,13 @@ services:
       - media:/app/media
     depends_on:
       - db
-      - nginx
+    command: >
+      sh -c "sleep 12 && \
+      python manage.py migrate && \
+      python manage.py import_data && \
+      python manage.py collectstatic --noinput && \
+      cp -r /app/collected_static/. /backend_static/static/ && \
+      gunicorn --bind 0.0.0.0:8000 foodgram.wsgi:application"
 
   nginx:
     image: artyomserov/foodgram_nginx:v2
@@ -44,3 +50,4 @@ services:
     volumes:
       - static:/staticfiles
       - media:/media
+      - ./backend/api/docs/:/usr/share/nginx/html/api/docs/
