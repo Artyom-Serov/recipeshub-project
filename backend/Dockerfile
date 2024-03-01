@@ -5,17 +5,8 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-COPY requirements.txt ./
+COPY . .
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt --no-cache-dir
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt --no-cache-dir
 
-COPY . ./
-
-#RUN python manage.py collectstatic --noinput
-#RUN cp -r /app/collected_static/. /backend_static/static/
-CMD python manage.py migrate \
-    && python manage.py collectstatic --noinput \
-    && cp -r /app/collected_static/. /backend_static/static/
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "foodgram.wsgi:application"]
