@@ -22,7 +22,7 @@ from api.serializers import (IngredientSerializer,
 
 class TagsViewSet(ReadOnlyModelViewSet):
     """
-    ViewSet для работы с тегами.
+    Класс отображения для работы с тегами.
     Добавить тег может администратор.
     """
     queryset = Tag.objects.all()
@@ -32,7 +32,7 @@ class TagsViewSet(ReadOnlyModelViewSet):
 
 class IngredientsViewSet(ReadOnlyModelViewSet):
     """
-    ViewSet для работы с ингредиентами.
+    Класс отображения для работы с ингредиентами.
     Добавить ингредиент может администратор.
     """
     queryset = Ingredient.objects.all()
@@ -44,7 +44,7 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
 
 class RecipeViewSet(ModelViewSet):
     """
-    ViewSet для работы с рецептами.
+    Класс отображения для работы с рецептами.
     Для анонимов разрешен только просмотр рецептов.
     """
     queryset = Recipe.objects.all()
@@ -91,18 +91,31 @@ class RecipeViewSet(ModelViewSet):
         return self.delete_method_for_actions(
             request=request, pk=pk, model=RecipesFavorite)
 
+
+class ShoppingCartViewSet(ViewSet):
+    """
+    Класс отображения для работы с корзиной покупок.
+    """
+
     @action(detail=True, methods=['POST'],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk):
-        """Добавление рецепта в корзину покупок."""
-        return self.post_method_for_actions(
-            request=request, pk=pk, serializers=ShoppingCartSerializer)
+        """
+        Добавление рецепта в корзину покупок.
+        """
+        data = {'user': request.user.id, 'recipe': pk}
+        serializer = ShoppingCartSerializer(data=data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['GET'],
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
-        """Загрузка списка покупок в виде текстового файла."""
-        user = self.request.user
+        """
+        Загрузка списка покупок в виде текстового файла.
+        """
+        user = request.user
         shopping_cart_items = ShoppingCart.objects.filter(user=user)
         file = "Shopping Cart:\n\n"
         for item in shopping_cart_items:
@@ -119,6 +132,11 @@ class RecipeViewSet(ModelViewSet):
 
     @shopping_cart.mapping.delete
     def delete_shopping_cart(self, request, pk):
-        """Удаление рецепта из корзины покупок."""
-        return self.delete_method_for_actions(
-            request=request, pk=pk, model=ShoppingCart)
+        """
+        Удаление рецепта из корзины покупок.
+        """
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=pk)
+        shopping_cart_item = get_object_or_404(ShoppingCart, user=user, recipe=recipe)
+        shopping_cart_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
