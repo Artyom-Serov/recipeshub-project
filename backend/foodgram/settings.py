@@ -163,3 +163,4 @@ DJOSER = {
 AUTH_USER_MODEL = 'users.User'
 
 PAGE_SIZE = int(os.getenv('PAGE_SIZE', 10))
+LIMIT_VALUE = int(os.getenv('LIMIT_VALUE', 1))
