@@ -2,7 +2,6 @@
 Django settings for project.
 """
 import os
-# from datetime import timedelta
 
 from pathlib import Path
 from dotenv import load_dotenv
@@ -151,14 +150,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'api.pagination.PageNumberPaginator',
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.CustomPagination',
 }
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'HIDE_USERS': False,
     'SERIALIZERS': {
-        'user_create': 'api.serializers.CustomPagination',
+        'user_create': 'api.serializers.CustomUserCreateSerializer',
         'user': 'api.serializers.CustomUserSerializer',
     },
     'PERMISSIONS': {
@@ -168,14 +167,3 @@ DJOSER = {
 }
 
 AUTH_USER_MODEL = 'users.User'
-
-SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': False,
-    'SECURITY_DEFINITIONS': {
-        'Token': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-        }
-    },
-}
