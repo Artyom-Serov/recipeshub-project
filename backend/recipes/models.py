@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from users.models import User
@@ -16,7 +17,7 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         constraints = [
@@ -95,7 +96,11 @@ class Recipe(models.Model):
         verbose_name='Время приготовления (в минутах)',
         validators=(
             MinValueValidator(
-                limit_value=1, message='Время должно быть больше 1 минуты'),),
+                limit_value=getattr(settings, 'LIMIT_VALUE'),
+                message='Время должно быть больше %(limit)s минуты',
+                params={'limit': getattr(settings, 'LIMIT_VALUE')}
+            ),
+        ),
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
@@ -104,7 +109,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        ordering = ['-pub_date']
+        ordering = ('-pub_date',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
@@ -131,7 +136,11 @@ class IngredientInRecipe(models.Model):
         verbose_name='Количество ингредиента',
         validators=(
             MinValueValidator(
-                limit_value=1, message='Количество не может быть меньше 1'),),
+                limit_value=getattr(settings, 'LIMIT_VALUE'),
+                message='Количество не может быть меньше %(limit)s',
+                params={'limit': getattr(settings, 'LIMIT_VALUE')}
+            ),
+        ),
     )
 
     class Meta:
