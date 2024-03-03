@@ -91,57 +91,57 @@ class RecipeViewSet(ModelViewSet):
         return self.delete_method_for_actions(
             request=request, pk=pk, model=RecipesFavorite)
 
+    class ShoppingCartViewSet(ViewSet):
+        """
+        Класс отображения для работы с корзиной покупок.
+        """
 
-class ShoppingCartViewSet(ViewSet):
-    """
-    Класс отображения для работы с корзиной покупок.
-    """
+        @action(detail=True, methods=['POST'],
+                permission_classes=[IsAuthenticated])
+        def shopping_cart(self, request, pk):
+            """
+            Добавление рецепта в корзину покупок.
+            """
+            data = {'user': request.user.id, 'recipe': pk}
+            serializer = ShoppingCartSerializer(data=data,
+                                                context={'request': request}
+                                                )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['POST'],
-            permission_classes=[IsAuthenticated])
-    def shopping_cart(self, request, pk):
-        """
-        Добавление рецепта в корзину покупок.
-        """
-        data = {'user': request.user.id, 'recipe': pk}
-        serializer = ShoppingCartSerializer(data=data,
-                                            context={'request': request}
-                                            )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        @action(detail=False, methods=['GET'],
+                permission_classes=[IsAuthenticated])
+        def download_shopping_cart(self, request):
+            """
+            Загрузка списка покупок в виде текстового файла.
+            """
+            user = request.user
+            shopping_cart_items = ShoppingCart.objects.filter(user=user)
+            file = "Shopping Cart:\n\n"
+            for item in shopping_cart_items:
+                recipe = item.recipe
+                ingredients = recipe.ingredients.all()
+                file += f"Recipe: {recipe.title}\n"
+                for ingredient in ingredients:
+                    file += f"{ingredient.name}:"\
+                            f"{item.amount} {ingredient.unit}\n"
+                file += "\n"
+            response = HttpResponse(file, content_type='text/plain')
+            response['Content-Disposition'] = ('attachment; '
+                                               'filename="shopping_cart.txt"')
+            return response
 
-    @action(detail=False, methods=['GET'],
-            permission_classes=[IsAuthenticated])
-    def download_shopping_cart(self, request):
-        """
-        Загрузка списка покупок в виде текстового файла.
-        """
-        user = request.user
-        shopping_cart_items = ShoppingCart.objects.filter(user=user)
-        file = "Shopping Cart:\n\n"
-        for item in shopping_cart_items:
-            recipe = item.recipe
-            ingredients = recipe.ingredients.all()
-            file += f"Recipe: {recipe.title}\n"
-            for ingredient in ingredients:
-                file += f"{ingredient.name}: {item.amount} {ingredient.unit}\n"
-            file += "\n"
-        response = HttpResponse(file, content_type='text/plain')
-        response['Content-Disposition'] = ('attachment; '
-                                           'filename="shopping_cart.txt"')
-        return response
-
-    @shopping_cart.mapping.delete
-    def delete_shopping_cart(self, request, pk):
-        """
-        Удаление рецепта из корзины покупок.
-        """
-        user = request.user
-        recipe = get_object_or_404(Recipe, id=pk)
-        shopping_cart_item = get_object_or_404(ShoppingCart,
-                                               user=user,
-                                               recipe=recipe
-                                               )
-        shopping_cart_item.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        @shopping_cart.mapping.delete
+        def delete_shopping_cart(self, request, pk):
+            """
+            Удаление рецепта из корзины покупок.
+            """
+            user = request.user
+            recipe = get_object_or_404(Recipe, id=pk)
+            shopping_cart_item = get_object_or_404(ShoppingCart,
+                                                   user=user,
+                                                   recipe=recipe
+                                                   )
+            shopping_cart_item.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
