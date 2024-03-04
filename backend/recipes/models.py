@@ -97,8 +97,8 @@ class Recipe(models.Model):
         validators=(
             MinValueValidator(
                 limit_value=getattr(settings, 'LIMIT_VALUE'),
-                message='Время должно быть больше %(limit)s минуты',
-                params={'limit': getattr(settings, 'LIMIT_VALUE')}
+                message=('Количество не может быть меньше {}'
+                         ' минут(ы)').format(getattr(settings, 'LIMIT_VALUE'))
             ),
         ),
     )
@@ -137,8 +137,8 @@ class IngredientInRecipe(models.Model):
         validators=(
             MinValueValidator(
                 limit_value=getattr(settings, 'LIMIT_VALUE'),
-                message='Количество не может быть меньше %(limit)s',
-                params={'limit': getattr(settings, 'LIMIT_VALUE')}
+                message=('Количество не может быть '
+                         'меньше {}').format(getattr(settings, 'LIMIT_VALUE'))
             ),
         ),
     )
