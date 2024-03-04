@@ -1,5 +1,5 @@
 from django.db.models import Subquery
-from djoser.views import UserViewSet, TokenCreateView, TokenDestroyView
+from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -114,28 +114,3 @@ class CustomUserViewSet(UserViewSet, RetrieveAPIView):
             'results': serializer.data
         }
         return Response(data, status=status.HTTP_200_OK)
-
-
-class CustomTokenCreateView(TokenCreateView):
-    """
-    Класс представления для создания токена авторизации.
-    """
-
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            data = {'auth_token': response.data['auth_token']}
-            return Response(data, status=status.HTTP_201_CREATED)
-        return response
-
-
-class CustomTokenDestroyView(TokenDestroyView):
-    """
-    Класс представления для удаления токена авторизации.
-    """
-
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == status.HTTP_204_NO_CONTENT:
-            return Response({}, status=status.HTTP_204_NO_CONTENT)
-        return response
