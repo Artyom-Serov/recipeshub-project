@@ -1,6 +1,6 @@
-from django.conf import settings
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
+from foodgram.settings import LIMIT_VALUE
 from users.models import User
 
 
@@ -96,9 +96,8 @@ class Recipe(models.Model):
         verbose_name='Время приготовления (в минутах)',
         validators=(
             MinValueValidator(
-                limit_value=getattr(settings, 'LIMIT_VALUE'),
-                message=('Количество не может быть меньше {}'
-                         ' минут(ы)').format(getattr(settings, 'LIMIT_VALUE'))
+                limit_value=LIMIT_VALUE,
+                message=f'Количество не может быть меньше {LIMIT_VALUE}'
             ),
         ),
     )
@@ -136,9 +135,8 @@ class IngredientInRecipe(models.Model):
         verbose_name='Количество ингредиента',
         validators=(
             MinValueValidator(
-                limit_value=getattr(settings, 'LIMIT_VALUE'),
-                message=('Количество не может быть '
-                         'меньше {}').format(getattr(settings, 'LIMIT_VALUE'))
+                limit_value=LIMIT_VALUE,
+                message=f'Количество не может быть меньше {LIMIT_VALUE}'
             ),
         ),
     )
