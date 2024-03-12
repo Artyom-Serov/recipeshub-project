@@ -1,19 +1,20 @@
 from django_filters.rest_framework import FilterSet, filters
-from rest_framework.filters import SearchFilter
-
-from recipes.models import Recipe, Ingredient
+from django_filters import rest_framework as django_filters
 
 
-class IngredientSearchFilter(SearchFilter):
+from recipes.models import Recipe, Ingredient, Tag
+
+
+class IngredientSearchFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(
+        field_name='name', lookup_expr='icontains')
     """
     Фильтр для поиска ингредиентов по имени.
     """
 
-    search_param = 'name'
-
     class Meta:
         model = Ingredient
-        fields = ('name',)
+        fields = ['name']
 
 
 class RecipeFilter(FilterSet):
@@ -22,7 +23,12 @@ class RecipeFilter(FilterSet):
     и наличию в корзине.
     """
 
-    tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
+    tags = filters.ModelMultipleChoiceFilter(
+        field_name='tags__slug',
+        to_field_name='slug',
+        queryset=Tag.objects.all(),
+    )
+
     is_favorited = filters.BooleanFilter(method='filter_is_favorited')
     is_in_shopping_cart = filters.BooleanFilter(
         method='filter_is_in_shopping_cart'
