@@ -49,7 +49,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 class CustomUserSerializer(UserSerializer):
     """
-    Сериализатор для пользователя.
+    Сериализатор для отображения пользователей.
     """
 
     is_subscribed = serializers.SerializerMethodField(read_only=True)
@@ -170,9 +170,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
-    ingredients = IngredientSerializer(
-        many=True, read_only=True, source='ingridients_recipe'
-    )
+    ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
 
@@ -180,7 +178,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = '__all__'
 
-    def get_ingredients(self, obj):
+    @staticmethod
+    def get_ingredients(obj):
         queryset = IngredientInRecipe.objects.filter(recipe=obj)
         return IngredientAmountSerializer(queryset, many=True).data
 
@@ -270,14 +269,16 @@ class RecipeSerializer(serializers.ModelSerializer):
     def create_ingredients(ingredients, recipe):
         for ingredient in ingredients:
             IngredientInRecipe.objects.create(
-                recipe=recipe, ingredient=ingredient['id'],
+                recipe=recipe,
+                ingredient=ingredient['id'],
+                # ingredient=ingredient.id,
                 amount=ingredient['amount']
             )
 
     @staticmethod
     def create_tags(tags, recipe):
         for tag in tags:
-            recipe.tags.add(tag)
+            recipe.tags.add(tag.id)
 
     def create(self, validated_data):
         author = self.context.get('request').user
