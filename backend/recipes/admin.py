@@ -1,7 +1,6 @@
-from django import forms
 from django.contrib import admin
-from django.forms import BaseInlineFormSet
-
+from django.contrib.auth.models import Group
+from rest_framework.authtoken.models import TokenProxy
 from .models import (Ingredient, IngredientInRecipe, Recipe,
                      RecipesFavorite, ShoppingCart, Tag)
 
@@ -20,41 +19,20 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-class IngredientInRecipeInlineFormSet(BaseInlineFormSet):
-    def clean(self):
-        super().clean()
-
-        ingredients = set()
-        for form in self.forms:
-            if (form.cleaned_data and form.cleaned_data['ingredient']
-                    in ingredients):
-                raise forms.ValidationError(
-                    'Ингредиенты должны быть уникальными.'
-                )
-            ingredients.add(form.cleaned_data['ingredient'])
-
-
 class IngredientInRecipeInline(admin.TabularInline):
     model = IngredientInRecipe
     extra = 1
-    formset = IngredientInRecipeInlineFormSet
-
-
-class RecipeAdminForm(forms.ModelForm):
-    class Meta:
-        model = Recipe
-        exclude = []
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'pub_date')
-    list_filter = ('author', 'tags')
+    list_filter = ('author', 'name', 'tags')
     search_fields = ('name', 'author__username')
     date_hierarchy = 'pub_date'
     inlines = [IngredientInRecipeInline]
-
-    form = RecipeAdminForm
+    #
+    # form = RecipeAdminForm
 
 
 @admin.register(IngredientInRecipe)
@@ -73,3 +51,7 @@ class RecipeFavoriteAdmin(admin.ModelAdmin):
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'recipe')
     empty_value_display = '-пусто-'
+
+
+admin.site.unregister(Group)
+admin.site.unregister(TokenProxy)
