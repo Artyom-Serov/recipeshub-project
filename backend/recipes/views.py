@@ -1,5 +1,4 @@
 import csv
-from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -7,8 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet   # ViewSet, GenericViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .models import (Ingredient,
                      Recipe,
@@ -126,63 +124,42 @@ class RecipeViewSet(ModelViewSet):
         return self.delete_method_for_actions(
             request=request, pk=pk, model=ShoppingCart)
 
-    # @action(detail=False, methods=['get'],
-    #         permission_classes=[IsAuthenticated])
-    # def download_shopping_cart(self, request):
-    #     """
-    #     Скачать список покупок в формате CSV.
-    #     """
-    #     user = request.user
-    #     ingredients = (
-    #         IngredientInRecipe.objects
-    #         .filter(recipe__cart__user=user)
-    #         .values('ingredient__name', 'ingredient__measurement_unit')
-    #         .annotate(total_amount=Sum('amount'))
-    #     )
-    #
-    #     response = HttpResponse(content_type='text/csv')
-    #     response['Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
-    #
-    #     writer = csv.writer(response)
-    #     writer.writerow(['Ingredient', 'Measurement Unit', 'Total Amount'])
-    #
-    #     for ingredient in ingredients:
-    #         writer.writerow([
-    #             ingredient['ingredient__name'],
-    #             ingredient['ingredient__measurement_unit'],
-    #             ingredient['total_amount']
-    #         ])
-    #
-    #     return response
-
-
-class ShoppingCartViewSet(APIView):
-    """
-    Представление для скачивания списка покупок в формате CSV.
-    """
-    permission_classes = [IsAuthenticated]
-
-    # @staticmethod
-    def get(self, request):
-        user = request.user
-        shopping_list = (
-            IngredientInRecipe.objects
-            .filter(recipe__shopping_list__user=user)
-            .values('ingredient__name', 'ingredient__measurement_unit')
-            .annotate(total_amount=Sum('amount'))
-        )
-
+    @action(detail=False, methods=['GET'],
+            permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        """Загрузка списка покупок в виде текстового файла."""
+        user = self.request.user
+        shopping_cart_items = ShoppingCart.objects.filter(user=user)
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
-
+        response['Content-Disposition'] = ('attachment; '
+                                           'filename="shopping_cart.csv"')
         writer = csv.writer(response)
-        writer.writerow(['Ingredient', 'Measurement Unit', 'Total Amount'])
+        ingredient_dict = {}
 
-        for ingredient in shopping_list:
+        for item in shopping_cart_items:
+            recipe = item.recipe
+            ingredients_in_recipe = IngredientInRecipe.objects.filter(recipe=recipe)
+            for ingredient_in_recipe in ingredients_in_recipe:
+                ingredient_name = ingredient_in_recipe.ingredient.name
+                amount = ingredient_in_recipe.amount
+                if ingredient_name in ingredient_dict:
+                    ingredient_dict[ingredient_name] += amount
+                else:
+                    ingredient_dict[ingredient_name] = amount
+
+        writer.writerow(['Ингредиент', 'Количество', 'Единицы измерения'])
+        for ingredient_name, amount in ingredient_dict.items():
+            ingredient = Ingredient.objects.get(name=ingredient_name)
             writer.writerow([
-                ingredient['ingredient__name'],
-                ingredient['ingredient__measurement_unit'],
-                ingredient['total_amount']
+                ingredient_name,
+                amount,
+                ingredient.measurement_unit,
             ])
 
         return response
+
+# class ShoppingCartViewSet(APIView):
+#     """
+#     Представление для скачивания списка покупок в формате CSV.
+#     """
+#     permission_classes = [IsAuthenticated]
