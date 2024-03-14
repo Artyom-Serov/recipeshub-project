@@ -26,9 +26,7 @@ services:
 
   backend:
     container_name: backend
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: artyomserov/foodgram_backend:v2
     env_file:
       - .env
     volumes:
@@ -45,9 +43,7 @@ services:
       gunicorn --bind 0.0.0.0:8000 foodgram.wsgi:application"
 
   nginx:
-    build:
-      context: ./infra
-      dockerfile: Dockerfile
+    image: artyomserov/foodgram_nginx:v2
     container_name: nginx
     restart: always
     ports:

@@ -44,7 +44,7 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
     Добавить ингредиент может администратор.
     """
     queryset = Ingredient.objects.all()
-    permission_classes = (AllowAny, )
+    permission_classes = (AllowAny,)
     serializer_class = IngredientSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = IngredientSearchFilter
@@ -127,7 +127,7 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=False, methods=['GET'],
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
-        """Загрузка списка покупок в виде текстового файла."""
+        """Загрузка списка покупок в виде CSV файла."""
         user = self.request.user
         shopping_cart_items = ShoppingCart.objects.filter(user=user)
         response = HttpResponse(content_type='text/csv')
@@ -157,9 +157,3 @@ class RecipeViewSet(ModelViewSet):
             ])
 
         return response
-
-# class ShoppingCartViewSet(APIView):
-#     """
-#     Представление для скачивания списка покупок в формате CSV.
-#     """
-#     permission_classes = [IsAuthenticated]
