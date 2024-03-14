@@ -23,7 +23,6 @@ from api.serializers import (IngredientSerializer,
                              RecipeSerializer,
                              RecipeListSerializer,
                              FavoriteSerializer,
-                             ShortRecipeSerializer,
                              ShoppingCartSerializer
                              )
 
@@ -138,7 +137,8 @@ class RecipeViewSet(ModelViewSet):
 
         for item in shopping_cart_items:
             recipe = item.recipe
-            ingredients_in_recipe = IngredientInRecipe.objects.filter(recipe=recipe)
+            ingredients_in_recipe = IngredientInRecipe.objects.filter(
+                recipe=recipe)
             for ingredient_in_recipe in ingredients_in_recipe:
                 ingredient_name = ingredient_in_recipe.ingredient.name
                 amount = ingredient_in_recipe.amount
