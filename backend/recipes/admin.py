@@ -31,8 +31,6 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'author__username')
     date_hierarchy = 'pub_date'
     inlines = [IngredientInRecipeInline]
-    #
-    # form = RecipeAdminForm
 
 
 @admin.register(IngredientInRecipe)
