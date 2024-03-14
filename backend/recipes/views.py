@@ -99,19 +99,6 @@ class RecipeViewSet(ModelViewSet):
 
     @action(detail=True, methods=['POST'],
             permission_classes=[IsAuthenticated])
-    def favorite(self, request, pk):
-        """Добавление рецепта в избранное."""
-        return self.post_method_for_actions(
-            request=request, pk=pk, serializers=FavoriteSerializer)
-
-    @favorite.mapping.delete
-    def delete_favorite(self, request, pk):
-        """Удаление рецепта из избранного."""
-        return self.delete_method_for_actions(
-            request=request, pk=pk, model=RecipesFavorite)
-
-    @action(detail=True, methods=['POST'],
-            permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk):
         """Добавление рецепта в корзину покупок."""
         return self.post_method_for_actions(
