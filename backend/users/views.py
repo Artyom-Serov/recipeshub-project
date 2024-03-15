@@ -2,7 +2,7 @@ from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from .models import Follow, User
@@ -19,6 +19,11 @@ class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     pagination_class = CustomPagination
+
+    def get_permissions(self):
+        if self.action in ['retrieve']:
+            return [AllowAny()]
+        return super().get_permissions()
 
     @action(
         detail=True,
