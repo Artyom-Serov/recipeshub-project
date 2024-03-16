@@ -74,6 +74,7 @@ class FollowSerializer(UserSerializer):
     """
     recipes = SerializerMethodField()
     recipes_count = SerializerMethodField()
+    is_subscribed = SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
@@ -83,6 +84,7 @@ class FollowSerializer(UserSerializer):
             'username',
             'first_name',
             'last_name',
+            'is_subscribed',
             'recipes',
             'recipes_count',
         )
@@ -105,6 +107,13 @@ class FollowSerializer(UserSerializer):
                 code=status.HTTP_400_BAD_REQUEST,
             )
         return data
+
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        return (
+            user.is_authenticated
+            and Follow.objects.filter(user=user, author=obj).exists()
+        )
 
     @staticmethod
     def get_recipes_count(obj):

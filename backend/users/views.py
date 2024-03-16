@@ -45,11 +45,18 @@ class CustomUserViewSet(UserViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == 'DELETE':
-            subscription = get_object_or_404(Follow,
-                                             user=user,
-                                             author=author)
+            if not user.is_authenticated:
+                return Response({'detail': 'Пользователь не авторизован'},
+                                status=status.HTTP_401_UNAUTHORIZED)
+
+            subscription = Follow.objects.filter(user=user, author=author).first()
+            if not subscription:
+                return Response({'detail': 'Подписка не найдена'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
             subscription.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response({'detail': 'Успешная отписка'},
+                            status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=False,
