@@ -235,7 +235,11 @@ class RecipeSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time')
 
     def validate(self, data):
-        ingredients = data['ingredients']
+        ingredients = data.get('ingredients', [])
+        if not ingredients:
+            raise serializers.ValidationError({
+                'ingredients': 'Список ингредиентов не может быть пустым.'
+            })
         ingredients_list = []
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
