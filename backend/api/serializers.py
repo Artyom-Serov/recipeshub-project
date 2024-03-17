@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
+from rest_framework.relations import PrimaryKeyRelatedField
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (
@@ -209,7 +210,7 @@ class AddIngredientSerializer(serializers.ModelSerializer):
     Сериализатор для добавления ингредиентов.
     """
 
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    id = PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField()
 
     class Meta:
@@ -235,6 +236,11 @@ class RecipeSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time')
 
     def validate(self, data):
+        image = data.get('image')
+        if not image:
+            raise serializers.ValidationError({
+                'image': 'Поле изображения не может быть пустым.'
+            })
         ingredients = data.get('ingredients', [])
         if not ingredients:
             raise serializers.ValidationError({
@@ -254,11 +260,12 @@ class RecipeSerializer(serializers.ModelSerializer):
                     'amount': 'Количество ингредиента должно быть больше нуля!'
                 })
 
-        tags = data['tags']
+        tags = data.get('tags', [])
         if not tags:
             raise serializers.ValidationError({
                 'tags': 'Нужно выбрать хотя бы один тэг!'
             })
+
         tags_list = []
         for tag in tags:
             if tag in tags_list:
@@ -281,7 +288,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             IngredientInRecipe.objects.create(
                 recipe=recipe,
                 ingredient=ingredient['id'],
-                # ingredient=ingredient.id,
                 amount=ingredient['amount']
             )
 
