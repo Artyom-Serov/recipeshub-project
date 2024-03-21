@@ -25,6 +25,14 @@ class CustomUserViewSet(UserViewSet):
             return [AllowAny()]
         return super().get_permissions()
 
+    @action(detail=False, permission_classes=[IsAuthenticated])
+    def me(self, request):
+        user = request.user
+        serializer = CustomUserSerializer(user, context={'request': request})
+        data = serializer.data
+        data['is_subscribed'] = False
+        return Response(data)
+
     @action(
         detail=True,
         methods=['POST', 'DELETE'],
@@ -49,7 +57,8 @@ class CustomUserViewSet(UserViewSet):
                 return Response({'detail': 'Пользователь не авторизован'},
                                 status=status.HTTP_401_UNAUTHORIZED)
 
-            subscription = Follow.objects.filter(user=user, author=author).first()
+            subscription = Follow.objects.filter(
+                user=user, author=author).first()
             if not subscription:
                 return Response({'detail': 'Подписка не найдена'},
                                 status=status.HTTP_400_BAD_REQUEST)
