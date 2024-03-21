@@ -69,6 +69,14 @@ class RecipeViewSet(ModelViewSet):
     @staticmethod
     def post_method_for_actions(request, pk, serializers):
         """Общий метод для обработки POST-запросов."""
+
+        # # Проверяем, есть ли уже рецепт в корзине пользователя
+        # if ShoppingCart.objects.filter(user=request.user, recipe=get_object_or_404(Recipe, id=pk)).exists():
+        #     return Response(
+        #         {"detail": "Рецепт уже добавлен в корзину"},
+        #         status=status.HTTP_400_BAD_REQUEST
+        #     )
+
         data = {'user': request.user.id, 'recipe': pk}
         serializer = serializers(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
