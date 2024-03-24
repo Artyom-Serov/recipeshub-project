@@ -1,4 +1,6 @@
 import csv
+
+from django.db import IntegrityError
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -69,26 +71,28 @@ class RecipeViewSet(ModelViewSet):
     @staticmethod
     def post_method_for_actions(request, pk, serializers):
         """Общий метод для обработки POST-запросов."""
-
-        # # Проверяем, есть ли уже рецепт в корзине пользователя
-        # if ShoppingCart.objects.filter(user=request.user, recipe=get_object_or_404(Recipe, id=pk)).exists():
-        #     return Response(
-        #         {"detail": "Рецепт уже добавлен в корзину"},
-        #         status=status.HTTP_400_BAD_REQUEST
-        #     )
-
         data = {'user': request.user.id, 'recipe': pk}
         serializer = serializers(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # if serializer.is_valid():
+        #     try:
+        #         serializer.save()
+        #     except IntegrityError:
+        #         return Response(status=status.HTTP_400_BAD_REQUEST)
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def delete_method_for_actions(request, pk, model):
         """Общий метод для обработки DELETE-запросов."""
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
-        model_obj = get_object_or_404(model, user=user, recipe=recipe)
+        try:
+            model_obj = model.objects.get(user=user, recipe=recipe)
+        except model.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         model_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
