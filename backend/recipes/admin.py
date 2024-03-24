@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin import display
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import TokenProxy
 from .models import (Ingredient, IngredientInRecipe, Recipe,
@@ -13,7 +14,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'measurement_unit')
+    list_display = ('name', 'measurement_unit')
     list_filter = ('name',)
     search_fields = ('name',)
     empty_value_display = '-пусто-'
@@ -26,11 +27,15 @@ class IngredientInRecipeInline(admin.TabularInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author', 'pub_date')
+    list_display = ('name', 'author', 'favorites_count', 'pub_date')
     list_filter = ('author', 'name', 'tags')
     search_fields = ('name', 'author__username')
     date_hierarchy = 'pub_date'
     inlines = [IngredientInRecipeInline]
+
+    @display(description='Количество добавлений в избранное')
+    def favorites_count(self, obj):
+        return obj.favorites.count()
 
 
 @admin.register(IngredientInRecipe)
