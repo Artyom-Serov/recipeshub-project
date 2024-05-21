@@ -10,7 +10,8 @@
 * созданы, развёрнуты и запущены на сервере мультиконтейнерные приложения;
 
 ## Технологии:
-* [Python 3.10](https://docs.python.org/3.10/) <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/python.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/python.svg" /> <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/django.svg" />
+* [Python 3.10](https://docs.python.org/3.10/)
 * [Django 4.2.7](https://www.djangoproject.com/)
 * [Django REST Framework 3.14.0](https://www.django-rest-framework.org/)
 * [PostgreSQL](https://www.postgresql.org/)
