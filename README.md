@@ -10,7 +10,14 @@
 * созданы, развёрнуты и запущены на сервере мультиконтейнерные приложения;
 
 ## Технологии:
-<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/python.svg" /> <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/django.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/python.svg" /> <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/django.svg" /> 
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/postgresql.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gunicorn.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/nginx.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/docker.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/react.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/json.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/postman.svg" />
 * [Python 3.10](https://docs.python.org/3.10/)
 * [Django 4.2.7](https://www.djangoproject.com/)
 * [Django REST Framework 3.14.0](https://www.django-rest-framework.org/)
@@ -18,6 +25,7 @@
 * [gunicorn 21.2.0](https://docs.gunicorn.org/en/stable/)
 * [Nginx](https://nginx.org/)
 * [Docker](https://www.docker.com/)
+* [React](https://ru.react.js.org/)
 * [JSON](https://www.json.org)
 * [Postman](https://www.postman.com/)
 
