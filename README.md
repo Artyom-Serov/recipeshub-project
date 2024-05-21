@@ -10,7 +10,7 @@
 * созданы, развёрнуты и запущены на сервере мультиконтейнерные приложения;
 
 ## Технологии:
-* [Python 3.10](https://docs.python.org/3.10/)
+* <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/python.svg" />[Python 3.10](https://docs.python.org/3.10/)
 * [Django 4.2.7](https://www.djangoproject.com/)
 * [Django REST Framework 3.14.0](https://www.django-rest-framework.org/)
 * [PostgreSQL](https://www.postgresql.org/)
@@ -20,7 +20,6 @@
 * [JSON](https://www.json.org)
 * [Postman](https://www.postman.com/)
 
-[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=anuraghazra&layout=compact)](https://github.com/anuraghazra/github-readme-stats) 
 
 ## Размещение и запуск проекта на сервере.
 ### Клонировать репозиторий и перейти в него:
