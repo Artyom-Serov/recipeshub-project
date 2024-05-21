@@ -16,9 +16,11 @@
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gunicorn.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/nginx.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/docker.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/git.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/make.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/react.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/json.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linux.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/postman.svg" />
 * [Python 3.10](https://docs.python.org/3.10/)
 * [Django 4.2.7](https://www.djangoproject.com/)
@@ -33,23 +35,23 @@
 
 
 ## Размещение и запуск проекта на сервере.
-### Клонировать репозиторий и перейти в него:
+### Клонировать репозиторий и перейти в него <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/git.svg" />:
 ```
 git clone https://github.com/Artyom-Serov/foodgram-project-react.git
 ```
 ```
 cd foodgram-project-react
 ```
-Внести данные в файл `.env.example` и переименовать его в `.env`.
+Внести данные в файл `.env.example` и переименовать его в `.env` <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/dotenv.svg" />.
 
-Выполнить установку и настройку nginx и файрвола:
+Выполнить установку и настройку nginx и файрвола <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linux.svg" />:
 * `sudo apt install nginx -y`
 * `sudo systemctl start nginx`
 * `sudo ufw allow 'Nginx Full'`
 * `sudo ufw allow OpenSSH`
 * `sudo ufw enable`
 
-### Настраиваем конфигурации nginx на сервере:
+### Настраиваем конфигурации nginx на сервере <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/nginx.svg" />:
 выполнив команду `sudo nano /etc/nginx/sites-enabled/default` в файле оставляем только следующие параметры
 ```
 server {
@@ -81,14 +83,14 @@ sudo nginx -t
 ```
 sudo systemctl reload nginx
 ```
-### Устанавливаем и настраиваем Docker 
+### Устанавливаем и настраиваем Docker <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/docker.svg" />:
 * `sudo apt update`
 * `sudo apt install curl`
 * `curl -fSL https://get.docker.com -o get-docker.sh`
 * `sudo sh ./get-docker.sh`
 * `sudo apt-get install docker-compose-plugin`
 
-Запускаем проект:
+Запускаем проект <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/make.svg" />:
 ```
 make run
 ```
