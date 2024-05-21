@@ -20,6 +20,8 @@
 * [JSON](https://www.json.org)
 * [Postman](https://www.postman.com/)
 
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=anuraghazra&layout=compact)](https://github.com/anuraghazra/github-readme-stats) 
+
 ## Размещение и запуск проекта на сервере.
 ### Клонировать репозиторий и перейти в него:
 ```
