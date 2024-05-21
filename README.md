@@ -11,10 +11,12 @@
 
 ## Технологии:
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/python.svg" /> <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/django.svg" /> 
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/dotenv.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/postgresql.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gunicorn.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/nginx.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/docker.svg" />
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/make.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/react.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/json.svg" />
 <img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/postman.svg" />
