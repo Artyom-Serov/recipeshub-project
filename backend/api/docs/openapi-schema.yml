@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: 'Foodgram'
-  version: ''
+  version: '1.0.0'
 paths:
   /api/users/:
     get:
@@ -1202,7 +1202,6 @@ components:
 
   securitySchemes:
     Token:
-      description: 'Авторизация по токену. <br>
-      Все запросы от имени пользователя должны выполняться с заголовком "Authorization: Token TOKENVALUE"'
+      description: 'Авторизация по токену. <br> Все запросы от имени пользователя должны выполняться с заголовком "Authorization: Token TOKENVALUE"'
       type: http
       scheme: token

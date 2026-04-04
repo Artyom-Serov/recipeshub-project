@@ -29,13 +29,14 @@ services:
 
   backend:
     container_name: backend
-    image: artyomserov/foodgram_backend:v2
+    image: artyomserov/foodgram_backend:latest
     restart: always
     env_file:
       - .env
     volumes:
       - static:/backend_static
       - media:/app/media
+      - redoc:/app/docs
     depends_on:
       db:
         condition: service_healthy
@@ -43,10 +44,12 @@ services:
       sh -c "python manage.py migrate && \
       python manage.py collectstatic --noinput && \
       cp -r /app/collected_static/. /backend_static/static/ && \
+      mkdir -p /app/docs && \
+      cp -r /app/api/docs/* /app/docs/ && \
       gunicorn --bind 0.0.0.0:8000 foodgram.wsgi:application"
 
   nginx:
-    image: artyomserov/foodgram_nginx:v2
+    image: artyomserov/foodgram_nginx:latest
     container_name: nginx
     restart: always
     ports:
@@ -54,4 +57,4 @@ services:
     volumes:
       - static:/staticfiles
       - media:/media
-      - redoc:/usr/share/nginx/html/api/docs/
+      - redoc:/usr/share/nginx/html/api/docs:ro

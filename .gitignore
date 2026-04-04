@@ -61,6 +61,7 @@ local_settings.py
 db.sqlite3
 db.sqlite3.bak
 db.sqlite3-journal
+*database.dump
 
 # Flask stuff:
 instance/
@@ -104,6 +105,7 @@ celerybeat.pid
 
 # Environments
 backend/.env
+backend/.env.tests
 env
 .env
 *.env
@@ -149,3 +151,14 @@ backend/static
 
 backend/docker-compose.database.yml
 backend/Makefile
+
+# Agent instructions
+AGENTS.md
+
+# Media files
+backend/media/
+*.png
+*.jpg
+*.jpeg
+*.gif
+
