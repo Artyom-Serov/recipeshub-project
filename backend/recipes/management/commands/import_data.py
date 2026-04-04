@@ -68,32 +68,44 @@ def load_data(file_name, class_name, file_type, project_root):
         print(f'Пропуск загрузки данных для {file_name}.{file_type}')
         return
 
+    loaded_count = 0
     if file_type == 'csv':
         rows = data[1:]
         for row in rows:
             data_csv = change_foreign_values(
                 {key: value for key, value in zip(data[0], row)})
             try:
-                table = class_name(**data_csv)
-                table.save()
+                _, created = class_name.objects.get_or_create(
+                    name=data_csv['name'],
+                    measurement_unit=data_csv.get('measurement_unit', ''),
+                    defaults=data_csv
+                )
+                if created:
+                    loaded_count += 1
             except (ValueError, IntegrityError) as error:
                 print(
                     f'Ошибка в загружаемых данных.'
                     f'{error}. {table_not_loaded}')
                 break
-        print(table_loaded)
     elif file_type == 'json':
         for item in data:
             item = change_foreign_values(item)
             try:
-                table = class_name(**item)
-                table.save()
+                _, created = class_name.objects.get_or_create(
+                    name=item['name'],
+                    measurement_unit=item.get('measurement_unit', ''),
+                    defaults=item
+                )
+                if created:
+                    loaded_count += 1
             except (ValueError, IntegrityError) as error:
                 print(
                     f'Ошибка в загружаемых данных.'
                     f'{error}. {table_not_loaded}')
                 break
-        print(table_loaded)
+
+    print(f'Загружено {loaded_count} записей.')
+    print(table_loaded)
 
 
 def load_tags(project_root):
@@ -108,14 +120,21 @@ def load_tags(project_root):
         print(f'Пропуск загрузки данных для {file_name}.{file_type}')
         return
 
+    loaded_count = 0
     for item in data:
         try:
-            tag = class_name.objects.create(**item)
+            _, created = class_name.objects.get_or_create(
+                slug=item['slug'],
+                defaults=item
+            )
+            if created:
+                print(f'Тег {item["name"]} загружен.')
+                loaded_count += 1
         except (ValueError, IntegrityError) as error:
             print(f'Ошибка в загружаемых данных. {error}.')
             break
 
-        print(f'Тег {tag.name} загружен.')
+    print(f'Загружено {loaded_count} тегов.')
     print(f'Информация в таблицу {class_name.__qualname__} загружена.')
 
 
