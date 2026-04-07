@@ -1,5 +1,11 @@
 import csv
 
+from api.filters import IngredientSearchFilter, RecipeFilter
+from api.pagination import CustomPagination
+from api.permissions import IsAuthorOrReadOnly
+from api.serializers import (FavoriteSerializer, IngredientSerializer,
+                             RecipeListSerializer, RecipeSerializer,
+                             ShoppingCartSerializer, TagSerializer)
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -10,23 +16,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from .models import (Ingredient,
-                     Recipe,
-                     Tag,
-                     IngredientInRecipe,
-                     RecipesFavorite,
-                     ShoppingCart
-                     )
-from api.filters import IngredientSearchFilter, RecipeFilter
-from api.pagination import CustomPagination
-from api.permissions import IsAuthorOrReadOnly
-from api.serializers import (IngredientSerializer,
-                             TagSerializer,
-                             RecipeSerializer,
-                             RecipeListSerializer,
-                             FavoriteSerializer,
-                             ShoppingCartSerializer
-                             )
+from .models import (Ingredient, IngredientInRecipe, Recipe, RecipesFavorite,
+                     ShoppingCart, Tag)
 
 
 class TagsViewSet(ReadOnlyModelViewSet):

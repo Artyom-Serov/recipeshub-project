@@ -1,29 +1,60 @@
 """Модуль для импорта данных в базу данных из CSV и JSON файлов.
 
-Настроен импорт ингредиентов из папки data
-Запускается из дерриктории backend
+Настроен импорт ингредиентов из папки data.
+Запускается из директории backend
 командой `python manage.py import_data`.
 """
 import csv
 import json
 import os
+from typing import Any
 
 from django.core.management import BaseCommand
 from django.db import IntegrityError
-
 from recipes.models import Ingredient, Tag
 
-FILES_CLASSES = {
+FILES_CLASSES: dict[str, type] = {
     'ingredients': Ingredient,
 }
 
-FIELDS = {
+FIELDS: dict[str, tuple[str, type]] = {
     'name': ('name', Ingredient),
     'measurement_unit': ('measurement_unit', Ingredient),
 }
 
 
-def open_data_file(file_name, file_type, project_root):
+def get_file_type(file_name: str, project_root: str) -> str | None:
+    """Определяет формат файла для загрузки."""
+    csv_path = os.path.join(project_root, 'data', f'{file_name}.csv')
+    json_path = os.path.join(project_root, 'data', f'{file_name}.json')
+
+    csv_exists = os.path.isfile(csv_path)
+    json_exists = os.path.isfile(json_path)
+
+    if csv_exists and json_exists:
+        print(f'Найдены два файла данных: {file_name}.csv и {file_name}.json')
+        print('Выберите, файл какого формата загрузить:')
+        print('1 - CSV')
+        print('2 - JSON')
+        while True:
+            choice = input('Введите номер (1 или 2): ').strip()
+            if choice == '1':
+                return 'csv'
+            elif choice == '2':
+                return 'json'
+            print('Неверный выбор. Введите 1 или 2.')
+    elif csv_exists:
+        return 'csv'
+    elif json_exists:
+        return 'json'
+    return None
+
+
+def open_data_file(
+    file_name: str,
+    file_type: str,
+    project_root: str
+) -> list[list[str]] | list[dict[str, Any]] | None:
     """Менеджер контекста для открытия файлов."""
     file_path = os.path.join(
         project_root, 'data', f'{file_name}.{file_type}')
@@ -41,7 +72,7 @@ def open_data_file(file_name, file_type, project_root):
         return None
 
 
-def change_foreign_values(data):
+def change_foreign_values(data: dict[str, Any]) -> dict[str, Any]:
     """Изменяет значения."""
     data_copy = data.copy()
     for field_key, field_value in data.items():
@@ -56,7 +87,12 @@ def change_foreign_values(data):
     return data_copy
 
 
-def load_data(file_name, class_name, file_type, project_root):
+def load_data(
+    file_name: str,
+    class_name: type,
+    file_type: str,
+    project_root: str
+) -> None:
     """Загружает данные ингредиентов из файлов ingredients.json или
     ingredients.csv."""
     table_not_loaded = (f'Информация в таблицу'
@@ -70,10 +106,11 @@ def load_data(file_name, class_name, file_type, project_root):
 
     loaded_count = 0
     if file_type == 'csv':
-        rows = data[1:]
-        for row in rows:
+        rows = data
+        header = rows[0]
+        for row in rows[1:]:
             data_csv = change_foreign_values(
-                {key: value for key, value in zip(data[0], row)})
+                {key: value for key, value in zip(header, row)})
             try:
                 _, created = class_name.objects.get_or_create(
                     name=data_csv['name'],
@@ -89,6 +126,8 @@ def load_data(file_name, class_name, file_type, project_root):
                 break
     elif file_type == 'json':
         for item in data:
+            if not isinstance(item, dict):
+                continue
             item = change_foreign_values(item)
             try:
                 _, created = class_name.objects.get_or_create(
@@ -108,7 +147,7 @@ def load_data(file_name, class_name, file_type, project_root):
     print(table_loaded)
 
 
-def load_tags(project_root):
+def load_tags(project_root: str) -> None:
     """Загружает данные тегов из файла tags.json."""
     file_name = 'tags'
     file_type = 'json'
@@ -121,7 +160,10 @@ def load_tags(project_root):
         return
 
     loaded_count = 0
-    for item in data:
+    tags_data: list[dict[str, Any]] = [
+        item for item in data if isinstance(item, dict)
+    ]
+    for item in tags_data:
         try:
             _, created = class_name.objects.get_or_create(
                 slug=item['slug'],
@@ -145,8 +187,11 @@ class Command(BaseCommand):
         project_root = os.getcwd()
         for key, value in FILES_CLASSES.items():
             print(f'Загрузка информации в таблицу {value.__qualname__}')
-            load_data(key, value, 'csv', project_root)
-            load_data(key, value, 'json', project_root)
+            file_type = get_file_type(key, project_root)
+            if file_type:
+                load_data(key, value, file_type, project_root)
+            else:
+                print(f'Файл для {key} не найден. Пропуск.')
 
         print('Загрузка тегов')
         load_tags(project_root)
