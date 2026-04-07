@@ -15,7 +15,9 @@ router.register('tags', TagsViewSet, basename='tags')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('docs/', RedirectView.as_view(url='/api/docs/redoc.html', permanent=False)),
+    path('docs/', RedirectView.as_view(
+        url='/api/docs/redoc.html',
+        permanent=False)),
     path('drf-auth/', include('rest_framework.urls')),
     path('auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
