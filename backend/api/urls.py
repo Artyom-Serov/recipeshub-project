@@ -1,10 +1,7 @@
 from django.urls import include, path, re_path
 from django.views.generic import RedirectView
+from recipes.views import IngredientsViewSet, RecipeViewSet, TagsViewSet
 from rest_framework.routers import DefaultRouter
-from recipes.views import (IngredientsViewSet,
-                           RecipeViewSet,
-                           TagsViewSet,
-                           )
 from users.views import CustomUserViewSet
 
 router = DefaultRouter()

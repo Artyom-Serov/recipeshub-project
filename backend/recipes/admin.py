@@ -2,8 +2,9 @@ from django.contrib import admin
 from django.contrib.admin import display
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import TokenProxy
-from .models import (Ingredient, IngredientInRecipe, Recipe,
-                     RecipesFavorite, ShoppingCart, Tag)
+
+from .models import (Ingredient, IngredientInRecipe, Recipe, RecipesFavorite,
+                     ShoppingCart, Tag)
 
 
 @admin.register(Tag)
