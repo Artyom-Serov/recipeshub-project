@@ -1,10 +1,7 @@
 from django.urls import include, path, re_path
 from django.views.generic import RedirectView
+from recipes.views import IngredientsViewSet, RecipeViewSet, TagsViewSet
 from rest_framework.routers import DefaultRouter
-from recipes.views import (IngredientsViewSet,
-                           RecipeViewSet,
-                           TagsViewSet,
-                           )
 from users.views import CustomUserViewSet
 
 router = DefaultRouter()
@@ -15,7 +12,9 @@ router.register('tags', TagsViewSet, basename='tags')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('docs/', RedirectView.as_view(url='/api/docs/redoc.html', permanent=False)),
+    path('docs/', RedirectView.as_view(
+        url='/api/docs/redoc.html',
+        permanent=False)),
     path('drf-auth/', include('rest_framework.urls')),
     path('auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
