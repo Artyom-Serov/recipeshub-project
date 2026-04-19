@@ -104,7 +104,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-backend/.env
+backend/media/.env
 backend/.env.tests
 env
 .env
