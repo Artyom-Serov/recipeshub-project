@@ -87,6 +87,7 @@ class Recipe(models.Model):
         verbose_name='Изображение',
         upload_to='',
         blank=True,
+        max_length=200,
         help_text='Выберите изображение для рецепта'
     )
     text = models.TextField(
