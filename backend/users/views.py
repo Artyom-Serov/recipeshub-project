@@ -1,5 +1,5 @@
-from api.pagination import CustomPagination
-from api.serializers import CustomUserSerializer, FollowSerializer
+from api.v1.pagination import CustomPagination
+from api.v1.serializers import CustomUserSerializer, FollowSerializer
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action

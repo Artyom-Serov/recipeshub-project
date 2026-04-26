@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'djoser',
-    'api.apps.ApiConfig',
+    'api.v1.apps.ApiConfig',
     'recipes.apps.RecipesConfig',
     'users.apps.UsersConfig',
 ]
@@ -152,8 +152,8 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'HIDE_USERS': False,
     'SERIALIZERS': {
-        'user_create': 'api.serializers.CustomUserCreateSerializer',
-        'user': 'api.serializers.CustomUserSerializer',
+        'user_create': 'api.v1.serializers.CustomUserCreateSerializer',
+        'user': 'api.v1.serializers.CustomUserSerializer',
     },
     'PERMISSIONS': {
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
