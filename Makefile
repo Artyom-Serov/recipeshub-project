@@ -24,7 +24,7 @@ run:
 	$(DOCKER_COMPOSE) up --build -d
 
 migrate:
-	$(DOCKER_EXEC) python manage.py migrate
+	$(DOCKER_EXEC) python manage.py makemigrations && python manage.py migrate
 
 createsuperuser:
 	$(DOCKER_EXEC) python manage.py createsuperuser
