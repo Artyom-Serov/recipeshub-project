@@ -1,4 +1,7 @@
 """Конфигурация pytest"""
+import shutil
+from pathlib import Path
+
 import pytest
 
 pytest_plugins = [
@@ -8,6 +11,18 @@ pytest_plugins = [
 ]
 
 pytestmark = pytest.mark.django_db
+
+@pytest.fixture(autouse=True)
+def cleanup_media_files():
+    """Очистка медиафайлов после каждого теста."""
+    yield
+    media_dir = Path(__file__).resolve().parent.parent / 'media'
+    if media_dir.exists():
+        for items in media_dir.iterdir():
+            if items.is_file():
+                items.unlink()
+            elif items.is_dir():
+                shutil.rmtree(items)
 
 @pytest.fixture
 def test_image_base64():
