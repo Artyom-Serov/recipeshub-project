@@ -2,7 +2,7 @@
 import pytest
 
 pytest_plugins = [
-#    'tests.fixtures.fixture_clients',
+    'tests.fixtures.fixture_clients',
     'tests.fixtures.fixture_recipes',
     'tests.fixtures.fixture_users',
 ]
