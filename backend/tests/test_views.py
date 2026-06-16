@@ -20,3 +20,19 @@ class TestTagsViewSet:
         response = api_client.get(f'/api/tags/{tag.id}/')
         assert response.status_code == status.HTTP_200_OK
         assert response.data['name'] == tag.name
+
+class TestIngredientsViewSet:
+    """Тесты представлений ингредиентов."""
+    pass
+
+class TestRecipesViewSet:
+    """Тесты представлений рецептов."""
+    pass
+
+class TestCustomerUserViewSet:
+    """Тесты представлений пользователей."""
+    pass
+
+class TestRecipeViwSetActions:
+    """Тесты действий RecipeViewSet."""
+    pass
