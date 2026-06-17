@@ -89,7 +89,7 @@ class TestRecipesViewSet:
         response = authenticated_client.delete(f'/api/recipes/{recipe.id}/')
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
-class TestCustomerUserViewSet:
+class TestCustomUserViewSet:
     """Тесты представлений пользователей."""
 
     def test_user_list_view(self, api_client):
@@ -122,7 +122,7 @@ class TestCustomerUserViewSet:
         )
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
-class TestRecipeViwSetActions:
+class TestRecipeViewSetActions:
     """Тесты действий RecipeViewSet."""
     def test_favorite_action(self, authenticated_client, recipe):
         """Тест добавления в избранное."""

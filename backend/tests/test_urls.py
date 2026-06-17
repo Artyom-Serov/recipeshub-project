@@ -26,7 +26,7 @@ class TestURLPatterns:
 
     def test_token_login_endpoint_exists(self, api_client):
         """Проверка эндпоинта получения токена (POST)."""
-        response = api_client.post('/api/auth/token/login')
+        response = api_client.post('/api/auth/token/login/')
         assert response.status_code in (200, 400, 401), (
             f'Endpoint not accessible: {response.status_code}'
         )
