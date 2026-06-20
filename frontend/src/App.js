@@ -149,20 +149,27 @@ function App() {
   }
 
   useEffect(_ => {
+    let mounted = true
     const token = localStorage.getItem('token')
     if (token) {
-      return api.getUserData()
+      api.getUserData()
         .then(res => {
-          setUser(res)
-          setLoggedIn(true)
-          getOrders()
+          if (mounted) {
+            setUser(res)
+            setLoggedIn(true)
+            getOrders()
+          }
         })
         .catch(err => {
-          setLoggedIn(false)
-          history.push('/signin')
+          if (mounted) {
+            setLoggedIn(false)
+            history.push('/signin')
+          }
         })
+    } else {
+      setLoggedIn(false)
     }
-    setLoggedIn(false)
+    return () => { mounted = false }
   }, [])
 
   if (loggedIn === null) {
