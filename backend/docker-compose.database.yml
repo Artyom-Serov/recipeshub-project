@@ -1,0 +1,19 @@
+volumes:
+  fg_test_data:
+
+services:
+  db:
+    image: postgres:13.10
+    container_name: test_db
+    restart: always
+    env_file:
+      - .env.tests
+    ports:
+      - "5432:5432"
+    volumes:
+      - fg_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-foodgram}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
