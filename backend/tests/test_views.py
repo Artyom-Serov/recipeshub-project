@@ -7,6 +7,7 @@ from recipes.models import RecipesFavorite, ShoppingCart
 
 pytestmark = pytest.mark.django_db
 
+
 class TestTagsViewSet:
     """Тесты представлений тегов."""
 
@@ -21,6 +22,7 @@ class TestTagsViewSet:
         assert response.status_code == status.HTTP_200_OK
         assert response.data['name'] == tag.name
 
+
 class TestIngredientsViewSet:
     """Тесты представлений ингредиентов."""
 
@@ -34,6 +36,7 @@ class TestIngredientsViewSet:
         response = api_client.get(f'/api/ingredients/{ingredient.id}/')
         assert response.status_code == status.HTTP_200_OK
         assert response.data['name'] == ingredient.name
+
 
 class TestRecipesViewSet:
     """Тесты представлений рецептов."""
@@ -89,6 +92,7 @@ class TestRecipesViewSet:
         response = authenticated_client.delete(f'/api/recipes/{recipe.id}/')
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
+
 class TestCustomUserViewSet:
     """Тесты представлений пользователей."""
 
@@ -121,6 +125,7 @@ class TestCustomUserViewSet:
             f'/api/users/{user2.id}/subscribe/'
         )
         assert response.status_code == status.HTTP_204_NO_CONTENT
+
 
 class TestRecipeViewSetActions:
     """Тесты действий RecipeViewSet."""

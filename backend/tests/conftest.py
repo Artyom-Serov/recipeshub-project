@@ -12,6 +12,7 @@ pytest_plugins = [
 
 pytestmark = pytest.mark.django_db
 
+
 @pytest.fixture(autouse=True)
 def cleanup_media_files():
     """Очистка медиафайлов после каждого теста."""
@@ -23,6 +24,7 @@ def cleanup_media_files():
                 items.unlink()
             elif items.is_dir():
                 shutil.rmtree(items)
+
 
 @pytest.fixture
 def test_image_base64():
