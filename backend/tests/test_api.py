@@ -5,9 +5,9 @@ import pytest
 from rest_framework import status
 
 from recipes.models import Recipe, RecipesFavorite, ShoppingCart
-from tests.fixtures.fixture_clients import authenticated_client
 
 pytestmark = pytest.mark.django_db
+
 
 class TestUserAPI:
     """Тесты API пользователей."""
@@ -70,6 +70,7 @@ class TestUserAPI:
         response = api_client.post('/api/users/', data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+
 class TestAuthAPI:
     """Тесты API аутентификации."""
 
@@ -100,6 +101,7 @@ class TestAuthAPI:
         data = {'password': 'test'}
         response = api_client.post('/api/auth/token/login/', data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
 
 class TestFollowAPI:
     """Тесты API подписок."""
@@ -134,6 +136,7 @@ class TestFollowAPI:
         response = authenticated_client.delete(url)
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
+
 class TestTagAPI:
     """Тесты API тегов."""
 
@@ -154,6 +157,7 @@ class TestTagAPI:
         """Проверка фильтрации тегов по имени."""
         response = api_client.get('/api/tags/', data={'name': tag.name})
         assert response.status_code == status.HTTP_200_OK
+
 
 class TestIngredientAPI:
     """Тесты API ингредиентов."""
@@ -180,6 +184,7 @@ class TestIngredientAPI:
         """Проверка поиска ингредиентов по имени."""
         response = api_client.get('/api/ingredients/', data={'name': 'Яйц'})
         assert response.status_code == status.HTTP_200_OK
+
 
 class TestRecipeAPI:
     """Тесты API рецептов."""
@@ -303,13 +308,13 @@ class TestRecipeAPI:
 
     def test_recipe_filter_by_author(self, api_client, recipe, user):
         """Проверка фильтрации рецептов по автору."""
-        response = api_client.get(f'/api/recipes/', {'author': user.id})
+        response = api_client.get('/api/recipes/', {'author': user.id})
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) >= 1
 
     def test_recipe_filter_by_tag(self, api_client, recipe, tag):
         """Проверка фильтрации рецептов по тегу."""
-        response = api_client.get(f'/api/recipes/', {'tag': tag.slug})
+        response = api_client.get('/api/recipes/', {'tag': tag.slug})
         assert response.status_code == status.HTTP_200_OK
 
     def test_recipe_filter_by_is_favorited(self, authenticated_client, recipe):
@@ -335,6 +340,7 @@ class TestRecipeAPI:
         assert response.status_code == status.HTTP_200_OK
         assert 'results' in response.data
         assert len(response.data['results']) <= 10
+
 
 class TestShoppingCartAPI:
     """Тесты API списка покупок."""
@@ -394,35 +400,3 @@ class TestDownloadShoppingCart:
         assert response.status_code == status.HTTP_200_OK
         assert 'attachment' in response['Content-Disposition']
         assert 'shopping_cart.csv' in response['Content-Disposition']
-
-
-class TestAuthAPI:
-    """Тесты API аутентификации."""
-
-    def test_login(self, api_client, user):
-        """Проверка входа пользователя."""
-        data = {
-            'email': user.email,
-            'password': 'testpass123'
-        }
-        response = api_client.post('/api/auth/token/login/', data)
-        assert response.status_code in [
-            status.HTTP_200_OK,
-            status.HTTP_400_BAD_REQUEST,
-            status.HTTP_404_NOT_FOUND
-        ]
-
-    def test_logout(self, authenticated_client):
-        """Проверка выхода пользователя."""
-        response = authenticated_client.post('/api/auth/token/logout/')
-        assert response.status_code in [
-            status.HTTP_200_OK,
-            status.HTTP_204_NO_CONTENT,
-            status.HTTP_401_UNAUTHORIZED
-        ]
-
-    def test_token_login_requires_email(self, api_client):
-        """Проверка, что для входа требуется email."""
-        data = {'password': 'test'}
-        response = api_client.post('/api/auth/token/login/', data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST

@@ -28,7 +28,7 @@ def cleanup_media_files():
 
 @pytest.fixture
 def test_image_base64():
-     """Фикстура тестового изображения."""
-     b64 = 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQ'
-     b64 += 'VR4nGP8z8Dwn4EIwESMolGF1FMIAD2cAhK2AyPVAAAAAElFTkSuQmCC'
-     return b64
+    """Фикстура тестового изображения."""
+    b64 = 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQ'
+    b64 += 'VR4nGP8z8Dwn4EIwESMolGF1FMIAD2cAhK2AyPVAAAAAElFTkSuQmCC'
+    return b64

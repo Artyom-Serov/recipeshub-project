@@ -8,11 +8,10 @@ from django.db import IntegrityError
 
 from recipes.models import (Ingredient, IngredientInRecipe, Recipe,
                             RecipesFavorite, ShoppingCart, Tag)
-from tests.fixtures.fixture_recipes import ingredient
-from tests.fixtures.fixture_users import user
 from users.models import Follow, User
 
 pytestmark = pytest.mark.django_db
+
 
 class TestUserModel:
     """Тесты модели пользователя."""
@@ -70,7 +69,7 @@ class TestUserModel:
                 first_name='Admin',
                 last_name='User',
                 password='adminpass123',
-                is_staff = False
+                is_staff=False
             )
         assert 'is_staff' in str(exc_info.value)
 
@@ -139,6 +138,7 @@ class TestUserModel:
         with pytest.raises(ValidationError):
             user.full_clean()
 
+
 class TestFollowModel:
     """Тесты модели подписки."""
 
@@ -187,6 +187,7 @@ class TestFollowModel:
         Follow.objects.create(user=user, author=admin_user)
         Follow.objects.create(user=user, author=user2)
         assert Follow.objects.filter(user=user).count() == 2
+
 
 class TestTagModel:
     """Тесты модели тега."""
@@ -240,6 +241,7 @@ class TestTagModel:
         """Проверка максимальной длины поля цвета."""
         assert tag._meta.get_field('color').max_length == 7
 
+
 class TestIngredientModel:
     """Тесты модели ингредиента."""
 
@@ -288,6 +290,7 @@ class TestIngredientModel:
     def test_measurement_unit_max_length(self, ingredient):
         """Проверка максимальной длины единицы измерения."""
         assert ingredient._meta.get_field('measurement_unit').max_length == 200
+
 
 class TestRecipeModel:
     """Тесты модели рецепта."""
@@ -373,6 +376,7 @@ class TestRecipeModel:
         assert min_validator is not None
         assert min_validator.limit_value == 1
 
+
 class TestIngredientInRecipe:
     """Тесты связи ингредиента и рецепта."""
 
@@ -443,6 +447,7 @@ class TestIngredientInRecipe:
         ingredient.delete()
         assert query.count() == 0
 
+
 class TestRecipeFavorite:
     """Тесты модели избранного."""
 
@@ -454,6 +459,7 @@ class TestRecipeFavorite:
         )
         assert favorite.user == user
         assert favorite.recipe == recipe
+
     def test_cannot_add_favorite_same_recipe_twice(self, user, recipe):
         """Проверка, что нельзя добавить рецепт в избранное дважды."""
         RecipesFavorite.objects.create(recipe=recipe, user=user)
@@ -494,6 +500,7 @@ class TestRecipeFavorite:
         RecipesFavorite.objects.create(recipe=recipe, user=user)
         assert user.favorites_user.filter(recipe=recipe).exists()
         assert recipe.favorites.filter(user=user).exists()
+
 
 class TestShoppingCart:
     """Тесты модели списка покупок."""
