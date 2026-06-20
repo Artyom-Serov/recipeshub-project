@@ -1,11 +1,11 @@
 import csv
 
-from api.filters import IngredientSearchFilter, RecipeFilter
-from api.pagination import CustomPagination
-from api.permissions import IsAuthorOrReadOnly
-from api.serializers import (FavoriteSerializer, IngredientSerializer,
-                             RecipeListSerializer, RecipeSerializer,
-                             ShoppingCartSerializer, TagSerializer)
+from api.v1.filters import IngredientSearchFilter, RecipeFilter
+from api.v1.pagination import CustomPagination
+from api.v1.permissions import IsAuthorOrReadOnly
+from api.v1.serializers import (FavoriteSerializer, IngredientSerializer,
+                                RecipeListSerializer, RecipeSerializer,
+                                ShoppingCartSerializer, TagSerializer)
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
