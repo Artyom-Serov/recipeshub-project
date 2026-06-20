@@ -38,5 +38,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://web:8000/"
+  "proxy": "http://web:8000/",
+  "devDependencies": {
+    "@testing-library/react-hooks": "^8.0.1"
+  }
 }

@@ -1,0 +1,9 @@
+services:
+  frontend-tests:
+    image: node:13.12.0-alpine
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      - CI=true
+    command: sh -c "npm install && npm test"

@@ -1,5 +1,19 @@
 """Fixtures for recipes, tags and ingredients."""
+import base64
+
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+
+def _create_test_image():
+    """Создание тестового изображения."""
+    b64 = 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVR4nGP8'
+    b64 += 'z8Dwn4EIwESMolGF1FMIAD2cAhK2AyPVAAAAAElFTkSuQmCC'
+    return SimpleUploadedFile(
+        name='test.png',
+        content=base64.b64decode(b64),
+        content_type='image/png',
+    )
 
 
 @pytest.fixture
@@ -67,14 +81,12 @@ def ingredient_salt(db):
 def recipe(db, user, tag, ingredient):
     """Создание тестового рецепта 'Омлет'."""
     from recipes.models import IngredientInRecipe, Recipe
-    b64 = 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVR4nGP8'
-    b64 += 'z8Dwn4EIwESMolGF1FMIAD2cAhK2AyPVAAAAAElFTkSuQmCC'
     recipe = Recipe.objects.create(
         author=user,
         name='Омлет',
         text='Взбить яйца и пожарить на сковороде',
         cooking_time=15,
-        image=f'data:image/png;base64,{b64}',
+        image=_create_test_image(),
     )
     recipe.tags.add(tag)
     IngredientInRecipe.objects.create(
@@ -89,14 +101,12 @@ def recipe(db, user, tag, ingredient):
 def recipe2(db, user2, tag2, ingredient2, recipe):
     """Создание второго тестового рецепта 'Молочная каша'."""
     from recipes.models import IngredientInRecipe, Recipe
-    b64 = 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVR4nGP8'
-    b64 += 'z8Dwn4EIwESMolGF1FMIAD2cAhK2AyPVAAAAAElFTkSuQmCC'
     recipe = Recipe.objects.create(
         author=user2,
         name='Молочная каша',
         text='Сварить на молоке',
         cooking_time=20,
-        image=f'data:image/png;base64,{b64}',
+        image=_create_test_image(),
     )
     recipe.tags.add(tag2)
     IngredientInRecipe.objects.create(
