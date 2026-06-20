@@ -75,7 +75,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
           <TagsContainer tags={tags} />
           <div>
             <p className={styles['single-card__text']}><Icons.ClockIcon /> {cooking_time} мин.</p>
-            <p className={styles['single-card__text_with_link']}>
+            <div className={styles['single-card__text_with_link']}>
               <div className={styles['single-card__text']}>
                 <Icons.UserIcon /> <LinkComponent
                   title={`${author.first_name} ${author.last_name}`}
@@ -88,7 +88,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
                 title='Редактировать рецепт'
                 className={styles['single-card__edit']}
               />}
-            </p>
+            </div>
           </div>
           <div className={styles['single-card__buttons']}>
             {authContext && <Button
