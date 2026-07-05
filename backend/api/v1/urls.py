@@ -1,5 +1,6 @@
 from django.urls import include, path, re_path
 from django.views.generic import RedirectView
+from api.v1.views import TaskStatusView
 from recipes.views import IngredientsViewSet, RecipeViewSet, TagsViewSet
 from rest_framework.routers import DefaultRouter
 from users.views import CustomUserViewSet
@@ -18,4 +19,5 @@ urlpatterns = [
     path('drf-auth/', include('rest_framework.urls')),
     path('auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
+    path('tasks/<str:task_id>/', TaskStatusView.as_view(), name='task-status'),
 ]
