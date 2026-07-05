@@ -58,3 +58,31 @@ services:
       - static:/staticfiles
       - media:/media
       - redoc:/usr/share/nginx/html/api/docs:ro
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: celery_worker
+    restart: always
+    command: celery -A foodgram worker -l info
+    env_file:
+      - .env
+    volumes:
+      - media:/app/media
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
