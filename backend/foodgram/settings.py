@@ -165,3 +165,18 @@ AUTH_USER_MODEL = 'users.User'
 
 PAGE_SIZE = int(os.getenv('PAGE_SIZE', 10))
 LIMIT_VALUE = int(os.getenv('LIMIT_VALUE', 1))
+
+# Celery Configuration
+CELERY_BROKER_URL = os.getenv(
+    'CELERY_BROKER_URL', 'amqp://guest:guest@localhost:5672//'
+)
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 300
+
+INSTALLED_APPS += ['django_celery_results']
