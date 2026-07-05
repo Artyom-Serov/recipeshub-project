@@ -294,12 +294,26 @@ class RecipeSerializer(serializers.ModelSerializer):
             recipe.tags.add(tag.id)
 
     def create(self, validated_data):
+        from recipes.tasks import save_recipe_image
+
         author = self.context.get('request').user
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
+        image_data = validated_data.pop('image', None)
+
         recipe = Recipe.objects.create(author=author, **validated_data)
         self.create_tags(tags, recipe)
         self.create_ingredients(ingredients, recipe)
+
+        # Dispatch image save to background task
+        if image_data:
+            content_type = (
+                image_data.content_type
+                if hasattr(image_data, 'content_type')
+                else 'image/jpeg'
+            )
+            save_recipe_image.delay(recipe.id, str(image_data), content_type)
+
         return recipe
 
     def to_representation(self, instance):
@@ -308,10 +322,26 @@ class RecipeSerializer(serializers.ModelSerializer):
         return RecipeListSerializer(instance, context=context).data
 
     def update(self, instance, validated_data):
+        from recipes.tasks import save_recipe_image
+
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
+        image_data = validated_data.pop('image', None)
+
         instance.tags.clear()
         IngredientInRecipe.objects.filter(recipe=instance).delete()
-        self.create_tags(validated_data.pop('tags'), instance)
-        self.create_ingredients(validated_data.pop('ingredients'), instance)
+        self.create_tags(tags, instance)
+        self.create_ingredients(ingredients, instance)
+
+        # Dispatch image save to background task
+        if image_data:
+            content_type = (
+                image_data.content_type
+                if hasattr(image_data, 'content_type')
+                else 'image/jpeg'
+            )
+            save_recipe_image.delay(instance.id, str(image_data), content_type)
+
         return super().update(instance, validated_data)
 
 
