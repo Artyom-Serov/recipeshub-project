@@ -1,5 +1,3 @@
-import csv
-
 from api.v1.filters import IngredientSearchFilter, RecipeFilter
 from api.v1.pagination import CustomPagination
 from api.v1.permissions import IsAuthorOrReadOnly
@@ -7,7 +5,6 @@ from api.v1.serializers import (FavoriteSerializer, IngredientSerializer,
                                 RecipeListSerializer, RecipeSerializer,
                                 ShoppingCartSerializer, TagSerializer)
 from django.db import IntegrityError
-from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
@@ -113,34 +110,12 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=False, methods=['GET'],
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
-        """Загрузка списка покупок в виде CSV файла."""
-        user = self.request.user
-        shopping_cart_items = ShoppingCart.objects.filter(user=user)
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = ('attachment; '
-                                           'filename="shopping_cart.csv"')
-        writer = csv.writer(response)
-        ingredient_dict = {}
+        """Dispatch CSV generation to background task."""
+        from recipes.tasks import generate_shopping_cart_csv
 
-        for item in shopping_cart_items:
-            recipe = item.recipe
-            ingredients_in_recipe = IngredientInRecipe.objects.filter(
-                recipe=recipe)
-            for ingredient_in_recipe in ingredients_in_recipe:
-                ingredient_name = ingredient_in_recipe.ingredient.name
-                amount = ingredient_in_recipe.amount
-                if ingredient_name in ingredient_dict:
-                    ingredient_dict[ingredient_name] += amount
-                else:
-                    ingredient_dict[ingredient_name] = amount
+        task = generate_shopping_cart_csv.delay(request.user.id)
 
-        writer.writerow(['Ингредиент', 'Количество', 'Единицы измерения'])
-        for ingredient_name, amount in ingredient_dict.items():
-            ingredient = Ingredient.objects.get(name=ingredient_name)
-            writer.writerow([
-                ingredient_name,
-                amount,
-                ingredient.measurement_unit,
-            ])
-
-        return response
+        return Response(
+            {'task_id': task.id},
+            status=status.HTTP_202_ACCEPTED
+        )
