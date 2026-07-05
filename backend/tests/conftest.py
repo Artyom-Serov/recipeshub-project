@@ -3,6 +3,11 @@ import shutil
 from pathlib import Path
 
 import pytest
+from django.conf import settings
+
+# Configure Celery for testing (synchronous execution)
+settings.CELERY_TASK_ALWAYS_EAGER = True
+settings.CELERY_TASK_EAGER_PROPAGATES = True
 
 pytest_plugins = [
     'tests.fixtures.fixture_clients',

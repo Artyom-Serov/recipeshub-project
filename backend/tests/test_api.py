@@ -384,19 +384,18 @@ class TestDownloadShoppingCart:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_download_empty_cart(self, authenticated_client):
-        """Проверка загрузки пустого списка покупок."""
+        """Проверка запуска генерации CSV для пустого списка покупок."""
         url = '/api/recipes/download_shopping_cart/'
         response = authenticated_client.get(url)
-        assert response.status_code == status.HTTP_200_OK
-        assert response['Content-Type'] == 'text/csv'
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert 'task_id' in response.data
 
     def test_download_cart_with_recipes(
             self, authenticated_client, recipe):
-        """Проверка загрузки списка покупок с рецептами."""
+        """Проверка запуска генерации CSV для списка покупок с рецептами."""
         user = authenticated_client.handler._force_user
         ShoppingCart.objects.create(user=user, recipe=recipe)
         url = '/api/recipes/download_shopping_cart/'
         response = authenticated_client.get(url)
-        assert response.status_code == status.HTTP_200_OK
-        assert 'attachment' in response['Content-Disposition']
-        assert 'shopping_cart.csv' in response['Content-Disposition']
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert 'task_id' in response.data

@@ -164,10 +164,10 @@ class TestRecipeViewSetActions:
     def test_download_shopping_cart_action(
         self, authenticated_client, user, recipe
     ):
-        """Тест загрузки списка покупок."""
+        """Тест запуска генерации CSV списка покупок."""
         ShoppingCart.objects.create(user=user, recipe=recipe)
         response = authenticated_client.get(
             '/api/recipes/download_shopping_cart/'
         )
-        assert response.status_code == status.HTTP_200_OK
-        assert response['Content-Type'] == 'text/csv'
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert 'task_id' in response.data

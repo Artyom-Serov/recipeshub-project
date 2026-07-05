@@ -307,12 +307,16 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         # Dispatch image save to background task
         if image_data:
+            import base64
             content_type = (
                 image_data.content_type
                 if hasattr(image_data, 'content_type')
                 else 'image/jpeg'
             )
-            save_recipe_image.delay(recipe.id, str(image_data), content_type)
+            # Read file content and encode to Base64 for serialization
+            image_data.seek(0)
+            image_b64 = base64.b64encode(image_data.read()).decode('utf-8')
+            save_recipe_image.delay(recipe.id, image_b64, content_type)
 
         return recipe
 
@@ -335,12 +339,16 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         # Dispatch image save to background task
         if image_data:
+            import base64
             content_type = (
                 image_data.content_type
                 if hasattr(image_data, 'content_type')
                 else 'image/jpeg'
             )
-            save_recipe_image.delay(instance.id, str(image_data), content_type)
+            # Read file content and encode to Base64 for serialization
+            image_data.seek(0)
+            image_b64 = base64.b64encode(image_data.read()).decode('utf-8')
+            save_recipe_image.delay(instance.id, image_b64, content_type)
 
         return super().update(instance, validated_data)
 
