@@ -13,7 +13,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from .models import (Ingredient, IngredientInRecipe, Recipe, RecipesFavorite,
+from .models import (Ingredient, Recipe, RecipesFavorite,
                      ShoppingCart, Tag)
 
 
@@ -110,7 +110,7 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=False, methods=['GET'],
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
-        """Dispatch CSV generation to background task."""
+        """Отправка генерации CSV в фоновую задачу."""
         from recipes.tasks import generate_shopping_cart_csv
 
         task = generate_shopping_cart_csv.delay(request.user.id)

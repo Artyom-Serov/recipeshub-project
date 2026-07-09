@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 class TaskStatusView(APIView):
     """
-    Return status of a Celery task.
+    Возвращает статус задачи Celery.
     """
     permission_classes = [IsAuthenticated]
 

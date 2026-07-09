@@ -149,9 +149,6 @@ backend/static
 
 backend/Makefile
 
-# Agent instructions
-AGENTS.md
-
 # Media files
 backend/media/
 *.png

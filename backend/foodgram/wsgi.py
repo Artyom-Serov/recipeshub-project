@@ -1,5 +1,5 @@
 """
-WSGI config for project.
+WSGI-конфигурация для проекта.
 """
 
 import os

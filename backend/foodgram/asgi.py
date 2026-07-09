@@ -1,5 +1,5 @@
 """
-ASGI config for backend project.
+ASGI-конфигурация для backend проекта.
 """
 
 import os

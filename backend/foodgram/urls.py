@@ -1,5 +1,5 @@
 """
-URL configuration for foodgram project.
+URL-конфигурация проекта foodgram.
 """
 from django.conf import settings
 from django.conf.urls.static import static
