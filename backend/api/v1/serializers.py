@@ -305,7 +305,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         self.create_tags(tags, recipe)
         self.create_ingredients(ingredients, recipe)
 
-        # Dispatch image save to background task
+        # Отправка сохранения изображения в фоновую задачу
         if image_data:
             import base64
             content_type = (
@@ -313,7 +313,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                 if hasattr(image_data, 'content_type')
                 else 'image/jpeg'
             )
-            # Read file content and encode to Base64 for serialization
+            # Чтение содержимого файла и кодирование в Base64 для сериализации
             image_data.seek(0)
             image_b64 = base64.b64encode(image_data.read()).decode('utf-8')
             save_recipe_image.delay(recipe.id, image_b64, content_type)
@@ -337,7 +337,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         self.create_tags(tags, instance)
         self.create_ingredients(ingredients, instance)
 
-        # Dispatch image save to background task
+        # Отправка сохранения изображения в фоновую задачу
         if image_data:
             import base64
             content_type = (
@@ -345,7 +345,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                 if hasattr(image_data, 'content_type')
                 else 'image/jpeg'
             )
-            # Read file content and encode to Base64 for serialization
+            # Чтение содержимого файла и кодирование в Base64 для сериализации
             image_data.seek(0)
             image_b64 = base64.b64encode(image_data.read()).decode('utf-8')
             save_recipe_image.delay(instance.id, image_b64, content_type)

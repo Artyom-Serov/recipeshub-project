@@ -1,4 +1,4 @@
-"""Fixtures for users."""
+"""Фикстуры для пользователей."""
 import pytest
 
 

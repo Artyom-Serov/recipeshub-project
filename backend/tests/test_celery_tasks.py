@@ -1,17 +1,12 @@
-import os
-import tempfile
 from unittest.mock import patch, MagicMock
 
-import pytest
-from django.conf import settings
 from django.test import TestCase
 
 from recipes.tasks import generate_shopping_cart_csv, save_recipe_image
 
 
-@pytest.mark.django_db
 class TestGenerateShoppingCartCSV(TestCase):
-    """Tests for CSV generation task."""
+    """Тесты для задачи генерации CSV."""
 
     def setUp(self):
         from recipes.models import (
@@ -64,9 +59,8 @@ class TestGenerateShoppingCartCSV(TestCase):
         self.assertEqual(result, f'shopping_carts/{self.user.id}.csv')
 
 
-@pytest.mark.django_db
 class TestSaveRecipeImage(TestCase):
-    """Tests for image save task."""
+    """Тесты для задачи сохранения изображения."""
 
     def setUp(self):
         from recipes.models import Recipe, User
@@ -77,7 +71,7 @@ class TestSaveRecipeImage(TestCase):
             last_name='User',
             password='testpass123'
         )
-        self.recipe = Recipe.objects.create(
+        self.recipe: Recipe = Recipe.objects.create(
             author=self.user,
             name='Блинчики',
             text='Рецепт',
@@ -85,7 +79,7 @@ class TestSaveRecipeImage(TestCase):
         )
 
     def test_image_save_updates_recipe(self):
-        # Minimal valid base64 image (1x1 white pixel PNG)
+        # Минимальное корректное base64-изображение (белый пиксель 1x1 PNG)
         import base64
         minimal_png = (
             b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01'

@@ -166,7 +166,7 @@ AUTH_USER_MODEL = 'users.User'
 PAGE_SIZE = int(os.getenv('PAGE_SIZE', 10))
 LIMIT_VALUE = int(os.getenv('LIMIT_VALUE', 1))
 
-# Celery Configuration
+# Конфигурация Celery
 CELERY_BROKER_URL = os.getenv(
     'CELERY_BROKER_URL', 'amqp://guest:guest@localhost:5672//'
 )

@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 )
 def generate_shopping_cart_csv(self, user_id):
     """
-    Generate shopping cart CSV file in background.
-    Returns file path relative to MEDIA_ROOT.
+    Генерация CSV-файла списка покупок в фоне.
+    Возвращает путь к файлу относительно MEDIA_ROOT.
     """
     from recipes.models import IngredientInRecipe, ShoppingCart
 
@@ -73,8 +73,8 @@ def generate_shopping_cart_csv(self, user_id):
 )
 def save_recipe_image(self, recipe_id, image_base64, content_type):
     """
-    Decode Base64 image and save to disk.
-    Updates Recipe.image field on success.
+    Декодирование Base64-изображения и сохранение на диск.
+    При успехе обновляет поле Recipe.image.
     """
     import uuid
     from recipes.models import Recipe
@@ -82,13 +82,13 @@ def save_recipe_image(self, recipe_id, image_base64, content_type):
     try:
         recipe = Recipe.objects.get(id=recipe_id)
 
-        # Decode base64
+        # Декодирование base64
         if ',' in image_base64:
             image_base64 = image_base64.split(',')[1]
 
         image_data = base64.b64decode(image_base64)
 
-        # Determine extension from content type
+        # Определение расширения по content-type
         ext_map = {
             'image/jpeg': 'jpg',
             'image/png': 'png',
@@ -97,19 +97,19 @@ def save_recipe_image(self, recipe_id, image_base64, content_type):
         }
         ext = ext_map.get(content_type, 'jpg')
 
-        # Generate unique filename
+        # Генерация уникального имени файла
         filename = f'{uuid.uuid4()}.{ext}'
         rel_path = os.path.join('recipes', filename)
         abs_path = os.path.join(settings.MEDIA_ROOT, rel_path)
 
-        # Ensure directory exists
+        # Убедиться, что директория существует
         os.makedirs(os.path.dirname(abs_path), exist_ok=True)
 
-        # Write file
+        # Запись файла
         with open(abs_path, 'wb') as f:
             f.write(image_data)
 
-        # Update recipe
+        # Обновление рецепта
         recipe.image = rel_path
         recipe.save(update_fields=['image'])
 

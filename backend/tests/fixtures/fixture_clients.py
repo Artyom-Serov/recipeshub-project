@@ -1,4 +1,4 @@
-"""Fixtures for API clients."""
+"""Фикстуры для API-клиентов."""
 import pytest
 
 

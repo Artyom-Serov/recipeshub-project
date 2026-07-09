@@ -22,7 +22,7 @@ class Api {
           const a = document.createElement('a');
           a.href = url;
           a.download = "shopping-list";
-          document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+          document.body.appendChild(a); // необходимо добавить элемент в DOM — иначе не будет работать в Firefox
           a.click();    
           a.remove();  //afterwards we remove the element again 
         })
@@ -101,7 +101,7 @@ class Api {
   }
 
 
-  // recipes
+  // рецепты
 
   getRecipes ({
     page = 1,
@@ -180,7 +180,7 @@ class Api {
     cooking_time,
     text,
     ingredients
-  }, wasImageUpdated) { // image was changed
+  }, wasImageUpdated) { // изображение было изменено
     const token = localStorage.getItem('token')
     return fetch(
       `/api/recipes/${recipe_id}/`,
@@ -262,7 +262,7 @@ class Api {
     ).then(this.checkResponse)
   }
 
-  // subscriptions
+  // подписки
 
   getSubscriptions ({
     page, 
@@ -314,7 +314,7 @@ class Api {
     ).then(this.checkResponse)
   }
 
-  // ingredients
+  // ингредиенты
   getIngredients ({ name }) {
     const token = localStorage.getItem('token')
     return fetch(
@@ -328,7 +328,7 @@ class Api {
     ).then(this.checkResponse)
   }
 
-  // tags
+  // теги
   getTags () {
     const token = localStorage.getItem('token')
     return fetch(

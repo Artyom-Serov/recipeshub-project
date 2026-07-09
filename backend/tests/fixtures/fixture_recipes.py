@@ -1,4 +1,4 @@
-"""Fixtures for recipes, tags and ingredients."""
+"""Фикстуры для рецептов, тегов и ингредиентов."""
 import base64
 
 import pytest
